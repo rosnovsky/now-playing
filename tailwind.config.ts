@@ -1,9 +1,13 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
+  content: ["./app/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        primary: '#1db954',
+        background: '#121212',
+      },
       fontFamily: {
         sans: [
           '"Inter"',

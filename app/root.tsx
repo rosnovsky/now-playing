@@ -4,35 +4,46 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
-
+import { useEffect, useState } from "react";
+import { Song } from "./routes/api.songs";
+import { useStore } from "./store";
 import "./tailwind.css";
+import { convertJpgToFavicon } from "./utils/favicon";
 
-export const links: LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+// export const links: LinksFunction = () => [
+//   { rel: "stylesheet", href: styles },
+// ];
+//
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export default function App() {
+  const [favicon, setFavicon] = useState<string | null>(null);
+  const data = useStore()
+
+  const currentSong: Song = data?.songs?.[0];
+
+  useEffect(() => {
+    const getFavicon = async () => {
+      const faviconUrl = await convertJpgToFavicon(currentSong.albumArt);
+      setFavicon(faviconUrl);
+    }
+    getFavicon();
+  }, [currentSong])
+
+
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href={favicon ?? "/favicon.ico"} type="blob" />
+        <title>{`${currentSong?.title ?? "Nothing playing"} - ${currentSong?.artist ?? "Current Music"}`}</title>
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -40,6 +51,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.error(error);
+  return (
+    <html lang="en">
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <pre>{JSON.stringify(error, null, 2)}</pre>
+        <Scripts />
+      </body>
+    </html>
+  );
 }
