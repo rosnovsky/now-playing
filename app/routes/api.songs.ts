@@ -1,66 +1,6 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
-import { z } from "zod";
-
-const mediaPartSchema = z.object({
-  id: z.number(),
-  key: z.string(),
-  duration: z.number(),
-  file: z.string(),
-  size: z.number(),
-  container: z.string(),
-  hasThumbnail: z.string().optional(),
-});
-
-const mediaSchema = z.object({
-  id: z.number(),
-  duration: z.number(),
-  bitrate: z.number().optional(),
-  audioChannels: z.number(),
-  audioCodec: z.string().optional(),
-  container: z.string(),
-  hasVoiceActivity: z.boolean(),
-  Part: z.array(mediaPartSchema).optional(),
-});
-
-const songSchema = z.object({
-  ratingKey: z.string(),
-  key: z.string(),
-  parentRatingKey: z.string(),
-  grandparentRatingKey: z.string(),
-  guid: z.string(),
-  parentGuid: z.string(),
-  grandparentGuid: z.string(),
-  parentStudio: z.string().optional(),
-  type: z.literal('track'),
-  title: z.string(),
-  grandparentKey: z.string().optional(),
-  parentKey: z.string().optional(),
-  grandparentTitle: z.string(),
-  parentTitle: z.string(),
-  summary: z.string(),
-  index: z.number().optional(),
-  parentIndex: z.number(),
-  ratingCount: z.number().optional(),
-  userRating: z.number().optional(),
-  viewCount: z.number().default(0),
-  skipCount: z.number().optional(),
-  lastViewedAt: z.number().optional(),
-  lastRatedAt: z.number().optional(),
-  parentYear: z.number().optional(),
-  thumb: z.string(),
-  art: z.string().optional(),
-  parentThumb: z.string(),
-  grandparentThumb: z.string().optional(),
-  grandparentArt: z.string().optional(),
-  duration: z.number(),
-  addedAt: z.number(),
-  updatedAt: z.number().optional(),
-  Media: z.array(mediaSchema).or(z.object(mediaSchema)).optional()
-});
-
-export const songsSchema = z.array(songSchema);
-export type Song = z.infer<typeof songSchema>;
+import { Song, songsSchema } from "~/types";
 
 export async function loader({ request }: { request: Request }) {
   const { searchParams } = new URL(request.url);

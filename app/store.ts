@@ -1,13 +1,11 @@
 import { create } from 'zustand';
-import { Album } from './routes/api.albums';
-import { Artist } from './routes/api.artists';
-import { Song } from './routes/api.songs';
+import { Album, Artist, Song } from '~/types';
 
 interface StoreState {
   songs: Song[];
   artists: Artist[];
   albums: Album[];
-  setData: (dataType: string, data: any[]) => void;
+  setData: (dataType: string, data: Song[] | Artist[] | Album[]) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({

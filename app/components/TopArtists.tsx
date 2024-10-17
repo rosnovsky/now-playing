@@ -1,15 +1,52 @@
-import type { Artist } from "~/routes/api.artists";
+import { useLoaderData } from "@remix-run/react";
+import React from "react";
+import { usePollData } from "~/hooks/usePollingData";
+import { ErrorBoundary } from "~/root";
+import { artistsSchema, type Artist } from "~/types";
 
-interface TopArtistsProps {
-  artists: Artist[];
-}
+export const TopArtists: React.FC = () => {
+  const { headers } = useLoaderData<{ headers: Record<string, string> }>();
+  const { data: artists, isLoading, error } = usePollData<Artist[]>('artists', {
+    schema: artistsSchema,
+    headers,
+    interval: 120000
+  });
 
-export const TopArtists: React.FC<TopArtistsProps> = ({ artists }: TopArtistsProps) => {
+  if (isLoading) {
+    return (
+      <div className="w-full animate-pulse">
+        <h2 className="text-2xl font-bold mb-4 text-green-400">Top 5 Artists</h2>
+        <ul className="space-y-4">
+          {[...Array(5)].map((_, index) => (
+            <li key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 mr-4">
+                  <div className="w-16 h-16 bg-gray-700 rounded-full"></div>
+                </div>
+                <div className="flex-grow">
+                  <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-600 rounded w-1/4"></div>
+                </div>
+                <div className="text-right">
+                  <div className="h-5 bg-green-400 rounded w-24"></div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  if (error) {
+    return <ErrorBoundary />;
+  }
+
   return (
     <div className="w-full">
       <h2 className="text-2xl font-bold mb-4 text-green-400">Top 5 Artists</h2>
       <ul className="space-y-4">
-        {artists.slice(0, 5).map((artist, index) => (
+        {artists?.slice(0, 5).map((artist, index) => (
           <li key={artist.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4">
             <div className="flex items-center">
               <div className="flex-shrink-0 mr-4">

@@ -1,10 +1,52 @@
-import type { Song } from "~/routes/api.songs";
+import { useLoaderData } from '@remix-run/react';
+import React from 'react';
+import { usePollData } from '~/hooks/usePollingData';
+import { ErrorBoundary } from '~/root';
+import { songsSchema, type Song } from "~/types";
 
-interface TopSongsProps {
-  songs: Song[];
-}
+export const TopSongs: React.FC = () => {
+  const { headers, initialSongs } = useLoaderData<{ headers: Record<string, string>, initialSongs: Song[] }>();
+  const { data: songs, isLoading, error } = usePollData<Song[]>('songs?sort=viewCount%3Adesc&limit=10', {
+    schema: songsSchema,
+    headers,
+    initialData: initialSongs,
+  });
 
-export const TopSongs: React.FC<TopSongsProps> = ({ songs }: TopSongsProps) => {
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto">
+        <ul className="space-y-4">
+          {[...Array(10)].map((_, index) => (
+            <li key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg animate-pulse">
+              <div className="flex items-center p-4">
+                <div className="flex-shrink-0 mr-4">
+                  <div className="w-20 h-20 bg-gray-700 rounded-md"></div>
+                </div>
+                <div className="flex-grow">
+                  <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-600 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-600 rounded w-2/3"></div>
+                </div>
+                <div className="flex-shrink-0 ml-4 text-right">
+                  <div className="h-5 bg-gray-700 rounded w-20 mb-2"></div>
+                  <div className="h-4 bg-gray-600 rounded w-10"></div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  if (error) {
+    return <ErrorBoundary />;
+  }
+
+  if (!songs || songs.length === 0) {
+    return <div>No top songs data available</div>;
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <ul className="space-y-4">

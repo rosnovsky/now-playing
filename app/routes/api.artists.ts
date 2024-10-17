@@ -1,22 +1,6 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
-import { z } from "zod";
-
-const artistSchema = z.object({
-  ratingKey: z.string(),
-  guid: z.string(),
-  type: z.literal('artist'),
-  title: z.string(),
-  summary: z.string(),
-  viewCount: z.number(),
-  thumb: z.string(),
-  art: z.string().nullable().optional(),
-  addedAt: z.number(),
-  updatedAt: z.number(),
-});
-
-export const artistsSchema = z.array(artistSchema);
-export type Artist = z.infer<typeof artistSchema>;
+import { Artist, artistsSchema } from "~/types";
 
 export async function loader({ request }: { request: Request }) {
   const response = await fetch(`${import.meta.env.VITE_PLEX_SERVER_URL}/library/sections/2/all?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}&type=8&sort=viewCount%3Adesc&limit=10`, {
@@ -25,9 +9,9 @@ export async function loader({ request }: { request: Request }) {
       "Accept": "application/json",
     },
   });
-  const data = await response.json();
+  const data = await response.json() as { MediaContainer: { Metadata: Artist[] } };
 
-  const artists = data.MediaContainer.Metadata.map((item: any) => ({
+  const artists = data.MediaContainer.Metadata.map((item: Artist) => ({
     ratingKey: item.ratingKey,
     guid: item.guid,
     type: item.type,

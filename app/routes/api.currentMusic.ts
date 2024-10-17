@@ -1,17 +1,6 @@
 import { json } from "@remix-run/node";
-import { z } from "zod";
+import { CurrentMusic, currentMusicSchema } from "~/types";
 
-const currentMusicSchema = z.object({
-  title: z.string(),
-  artist: z.string(),
-  album: z.string(),
-  albumArt: z.string(),
-  duration: z.number(),
-  currentTime: z.number(),
-  isPlaying: z.boolean(),
-});
-
-export type CurrentMusic = z.infer<typeof currentMusicSchema>;
 
 export async function loader() {
   try {
@@ -22,7 +11,6 @@ export async function loader() {
     });
     const data = await response.json();
 
-    // Assuming the first active session is the current playback
     const session = data.MediaContainer.Metadata?.[0];
 
     if (!session) {

@@ -1,29 +1,6 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
-import { z } from "zod";
-
-const albumSchema = z.object({
-  ratingKey: z.string(),
-  key: z.string(),
-  parentRatingKey: z.string(),
-  guid: z.string(),
-  parentGuid: z.string(),
-  type: z.literal('album'),
-  title: z.string(),
-  parentTitle: z.string(),
-  summary: z.string(),
-  index: z.number(),
-  viewCount: z.number(),
-  year: z.number(),
-  thumb: z.string(),
-  art: z.string().nullable().optional(),
-  parentThumb: z.string(),
-  addedAt: z.number(),
-  updatedAt: z.number(),
-});
-
-export const albumsSchema = z.array(albumSchema);
-export type Album = z.infer<typeof albumSchema>;
+import { Album, albumsSchema } from "~/types";
 
 export async function loader({ request }: { request: Request }) {
   const response = await fetch(`${import.meta.env.VITE_PLEX_SERVER_URL}/library/sections/2/all?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}&type=9&sort=viewCount%3Adesc&limit=10`, {
@@ -32,9 +9,9 @@ export async function loader({ request }: { request: Request }) {
       "Accept": "application/json",
     },
   });
-  const data = await response.json();
+  const data = await response.json() as { MediaContainer: { Metadata: Album[] } };
 
-  const albums = data.MediaContainer.Metadata.map((item: any) => ({
+  const albums = data.MediaContainer.Metadata.map((item: Album) => ({
     ratingKey: item.ratingKey,
     key: item.key,
     parentRatingKey: item.parentRatingKey,
