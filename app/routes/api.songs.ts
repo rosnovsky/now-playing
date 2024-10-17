@@ -56,7 +56,7 @@ const songSchema = z.object({
   duration: z.number(),
   addedAt: z.number(),
   updatedAt: z.number().optional(),
-  Media: z.array(mediaSchema).optional()
+  Media: z.array(mediaSchema).or(z.object(mediaSchema)).optional()
 });
 
 export const songsSchema = z.array(songSchema);
