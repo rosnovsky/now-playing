@@ -15,9 +15,9 @@ const mediaPartSchema = z.object({
 const mediaSchema = z.object({
   id: z.number(),
   duration: z.number(),
-  bitrate: z.number(),
+  bitrate: z.number().optional(),
   audioChannels: z.number(),
-  audioCodec: z.string(),
+  audioCodec: z.string().optional(),
   container: z.string(),
   hasVoiceActivity: z.boolean(),
   Part: z.array(mediaPartSchema).optional(),
