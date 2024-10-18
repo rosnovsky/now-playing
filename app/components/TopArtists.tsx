@@ -1,7 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import React from "react";
 import { usePollData } from "~/hooks/usePollingData";
-import { ErrorBoundary } from "~/root";
 import { artistsSchema, type Artist } from "~/types";
 
 export const TopArtists: React.FC = () => {
@@ -39,7 +38,7 @@ export const TopArtists: React.FC = () => {
   }
 
   if (error) {
-    return <ErrorBoundary />;
+    return "ERROR!"
   }
 
   return (

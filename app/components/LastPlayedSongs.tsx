@@ -1,9 +1,8 @@
 import { useLoaderData } from '@remix-run/react';
-import { Star, StarHalf } from 'lucide-react';
 import React from 'react';
 import { usePollData } from '~/hooks/usePollingData';
-import { ErrorBoundary } from '~/root';
 import { songsSchema, type Song } from "~/types";
+import { StarRating } from './StarRating';
 
 const getTimeAgo = (timestamp: number): string => {
   const seconds = Math.floor((Date.now() - timestamp * 1000) / 1000);
@@ -74,7 +73,7 @@ export const LastPlayedSongs: React.FC = () => {
   }
 
   if (error) {
-    return <ErrorBoundary />;
+    return "ERROR!"
   }
 
   if (!songs) {
@@ -96,45 +95,6 @@ export const LastPlayedSongs: React.FC = () => {
     return distributed;
   };
 
-  const convertTo5StarRating = (userRating: number) => {
-    if (userRating === undefined) return 0;
-    const convertedRating = userRating / 2;
-    return Math.round(convertedRating * 2) / 2;
-  };
-
-  const StarRating = ({ rating }: { rating: number }) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    return (
-      <div className="flex items-center">
-        {[...Array(5)].map((_, i) => (
-          <span key={i}>
-            {i < fullStars ? (
-              <Star className="w-4 h-4 text-gray-500 fill-current" />
-            ) : i === fullStars && hasHalfStar ? (
-              <StarHalf className="w-4 h-4 text-gray-500 fill-current" />
-            ) : (
-              <Star className="w-4 h-4 text-gray-400" />
-            )}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
-  const QualityBadge = ({ audioCodec, bitrate }: { audioCodec: string, bitrate: number }) => {
-    let quality = 'MP3';
-    if (audioCodec === 'flac' || audioCodec === 'alac') {
-      quality = bitrate > 1000 ? 'Hi-Res' : 'Lossless';
-    }
-    return (
-      <span className="border-[1px] border-gray-500 rounded-md text-gray-500 text-xs font-thin p-1">
-        {quality}
-      </span>
-    );
-  };
-
   return (
     <div className="w-full min-h-svh">
       <h2 className="text-2xl font-bold mb-4 text-green-400">Last 50 Played Songs</h2>
@@ -142,19 +102,18 @@ export const LastPlayedSongs: React.FC = () => {
         {distributeItems().map((columnItems, columnIndex) => (
           <div key={columnIndex} className={`lg:w-1/${columns} flex flex-col`}>
             {columnItems.map((song) => (
-              <div key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-sm m-2 py-12 px-2 flex items-center h-28">
+              <div key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-sm m-2 py-8 px-2 flex items-center h-24">
                 <img src={song.thumb} alt={`${song.title} cover`} className="w-16 h-16 object-cover rounded-md mr-3" />
                 <div className="flex-grow overflow-hidden my-5">
-                  <h3 className="text-sm font-semibold text-white truncate">{song.title}</h3>
+                  <h3 className="text-md font-semibold text-white truncate">{song.title}</h3>
                   <p className="text-xs text-gray-400 truncate">{song.grandparentTitle}</p>
                   <p className="text-xs text-gray-500 truncate">{song.parentTitle}</p>
-                  <StarRating rating={convertTo5StarRating(song.userRating ?? 0)} />
+                  <StarRating rating={song.userRating ?? 0} />
                 </div>
                 <div className="text-right ml-2 flex flex-col items-end">
                   <p className="text-xs text-gray-600 font-thin truncate mb-1">
                     {song.lastViewedAt ? getTimeAgo(song.lastViewedAt) : 'Never played'}
                   </p>
-                  <QualityBadge audioCodec={song.Media![0].audioCodec} bitrate={song.Media![0].bitrate} />
                 </div>
               </div>
             ))}

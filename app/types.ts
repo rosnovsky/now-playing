@@ -1,24 +1,46 @@
 import { z } from "zod";
 
+const streamSchema = z.object({
+  albumGain: z.string().optional(),
+  albumPeak: z.string().optional(),
+  albumRange: z.string().optional(),
+  audioChannelLayout: z.string(),
+  bitDepth: z.number(),
+  bitrate: z.number(),
+  channels: z.number(),
+  codec: z.string(),
+  displayTitle: z.string(),
+  extendedDisplayTitle: z.string(),
+  gain: z.string().optional(),
+  id: z.string(),
+  index: z.number(),
+  loudness: z.string().optional(),
+  lra: z.string().optional(),
+  peak: z.string().optional(),
+  samplingRate: z.number(),
+  selected: z.boolean(),
+  streamType: z.number(),
+});
+
 const mediaPartSchema = z.object({
-  id: z.number(),
-  key: z.string(),
+  container: z.string(),
   duration: z.number(),
   file: z.string(),
+  id: z.string(),
+  key: z.string(),
   size: z.number(),
-  container: z.string(),
-  hasThumbnail: z.string().optional(),
+  Stream: z.array(streamSchema),
 });
 
 const mediaSchema = z.object({
-  id: z.number(),
-  duration: z.number(),
-  bitrate: z.number(),
   audioChannels: z.number(),
   audioCodec: z.string(),
+  bitrate: z.number(),
   container: z.string(),
-  hasVoiceActivity: z.boolean(),
-  Part: z.array(mediaPartSchema).optional(),
+  duration: z.number(),
+  hasVoiceActivity: z.string(),
+  id: z.string(),
+  Part: z.array(mediaPartSchema),
 });
 
 const songSchema = z.object({
@@ -61,11 +83,27 @@ export const songsSchema = z.array(songSchema);
 export type Song = z.infer<typeof songSchema>;
 
 export const currentMusicSchema = z.object({
+  ratingKey: z.string(),
+  key: z.string(),
+  guid: z.string(),
+  parentGuid: z.string(),
+  grandparentGuid: z.string(),
+  type: z.literal('track'),
   title: z.string(),
-  artist: z.string(),
-  album: z.string(),
-  albumArt: z.string(),
+  grandparentTitle: z.string(),
+  parentTitle: z.string(),
+  summary: z.string(),
+  index: z.number(),
+  parentIndex: z.number(),
+  userRating: z.string().optional(),
+  viewCount: z.number(),
+  lastViewedAt: z.number(),
+  thumb: z.string(),
+  parentThumb: z.string(),
   duration: z.number(),
+  addedAt: z.number(),
+  Media: z.array(mediaSchema),
+  albumArt: z.string(),
   currentTime: z.number(),
   isPlaying: z.boolean(),
 });

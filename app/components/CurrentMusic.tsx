@@ -1,10 +1,10 @@
-import { useLoaderData } from '@remix-run/react';
-import { Music, Pause, Play } from 'lucide-react';
+import { isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
+import { AlertCircle, Music, Pause, Play, RefreshCcw } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { usePollData } from '~/hooks/usePollingData';
-import { ErrorBoundary } from '~/root';
 import { useStore } from '~/store';
 import { currentMusicSchema, type CurrentMusic } from '~/types';
+import { SongComponent } from './Song';
 
 export const CurrentMusicComponent: React.FC = () => {
   const { headers, initialCurrentMusic } = useLoaderData<{ headers: Record<string, string>, initialCurrentMusic: CurrentMusic | null }>();
@@ -14,14 +14,21 @@ export const CurrentMusicComponent: React.FC = () => {
     initialData: initialCurrentMusic,
     interval: 30000
   });
-  const storeData = useStore();
+  const { setCurrentMusic } = useStore();
   const [progress, setProgress] = useState(0);
   const [smoothProgress, setSmoothProgress] = useState(0);
   const lastUpdateTimeRef = useRef<number>(Date.now());
   const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (currentMusic && currentMusic.isPlaying) {
+    if (currentMusic) {
+      console.log(currentMusic)
+      setCurrentMusic(currentMusic);
+    }
+  }, [currentMusic, setCurrentMusic]);
+
+  useEffect(() => {
+    if (currentMusic?.isPlaying && currentMusic.duration && currentMusic.currentTime) {
       const currentProgress = (currentMusic.currentTime / currentMusic.duration) * 100;
       setProgress(currentProgress);
       setSmoothProgress(currentProgress);
@@ -54,7 +61,7 @@ export const CurrentMusicComponent: React.FC = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     }
-  }, [currentMusic, storeData]);
+  }, [currentMusic]);
 
   if (isLoading) {
     return (
@@ -83,7 +90,33 @@ export const CurrentMusicComponent: React.FC = () => {
   }
 
   if (error) {
-    return <ErrorBoundary />;
+    console.error(error)
+    return (
+      <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+        <h2 className="text-xl font-bold text-red-400 mb-3 flex items-center">
+          <AlertCircle className="w-5 h-5 mr-2" />
+          Shit!..
+        </h2>
+        <div className="flex items-center mt-3">
+          <div className="w-16 h-16 bg-gray-700 rounded-md mr-4 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <div className="flex-grow">
+            <p className="text-white mb-2">Well, something is clearly broken.</p>
+            <p className="text-gray-400 text-sm">I mean, it worked on my machine, you know? ;)</p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <button
+
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
+          >
+            <RefreshCcw className="w-4 h-4 mr-2" />
+            How about now?
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!currentMusic || !currentMusic.isPlaying) {
@@ -101,14 +134,7 @@ export const CurrentMusicComponent: React.FC = () => {
         {currentMusic.isPlaying ? <Play className="w-5 h-5 mr-2" /> : <Pause className="w-5 h-5 mr-2" />}
         Now Playing
       </h2>
-      <div className="flex items-center">
-        <img src={currentMusic.albumArt} alt={`${currentMusic.album} cover`} className="w-16 h-16 object-cover rounded-md mr-4" />
-        <div className="flex-grow">
-          <h3 className="text-lg font-semibold text-white truncate">{currentMusic.title}</h3>
-          <p className="text-gray-400 truncate">{currentMusic.artist}</p>
-          <p className="text-gray-500 text-sm truncate">{currentMusic.album}</p>
-        </div>
-      </div>
+      {currentMusic ? <SongComponent song={currentMusic} /> : "Loading..."}
       <div className="mt-2">
         <div className="bg-gray-700 rounded-full h-2 mt-2 overflow-hidden">
           <div
@@ -133,3 +159,28 @@ const formatTime = (seconds: number): string => {
   const remainingSeconds = Math.floor(seconds % 60);
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.log(error)
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        ERROR!
+        <pre>{JSON.stringify(error, null, 2)}</pre>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div>
+        <div>
+          ERROR!
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
+  }
+}
