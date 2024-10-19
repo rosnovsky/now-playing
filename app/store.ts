@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Album, Artist, CurrentMusic, Song } from '~/types';
+import type { Album, Artist, CurrentMusic, Song } from '~/types';
 
 interface StoreState {
   songs: Song[];

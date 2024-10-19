@@ -1,9 +1,7 @@
 import { json } from "@remix-run/node";
 import { CurrentMusicComponent } from "~/components/CurrentMusic";
 import { LastPlayedSongs } from "~/components/LastPlayedSongs";
-// import { LastPlayedSongs } from "~/components/LastPlayedSongs";
 import { TopAlbums } from "~/components/TopAlbums";
-// import { TopSongs } from "~/components/TopSongs";
 import { TopArtists } from "~/components/TopArtists";
 import { TopSongs } from "~/components/TopSongs";
 

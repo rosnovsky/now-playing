@@ -7,7 +7,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { CurrentMusic, Song } from "~/types";
+import { CurrentMusic } from "~/types";
 import { useStore } from "./store";
 import "./tailwind.css";
 import { convertJpgToFavicon } from "./utils/favicon";
@@ -19,26 +19,32 @@ export const loader = async () => {
 };
 
 export default function App() {
-  const { initialCurrentMusic } = useLoaderData<{ initialCurrentMusic: CurrentMusic | null }>();
+  const { initialCurrentMusic } = useLoaderData<{ initialCurrentMusic: { currentMusic: CurrentMusic | null, isPlaying: boolean } }>();
   const [favicon, setFavicon] = useState<string | null>(null);
   const { currentMusic, setCurrentMusic } = useStore();
 
-  const currentSong: Song | null = currentMusic || initialCurrentMusic;
+  const currentSong: CurrentMusic | null = currentMusic ?? initialCurrentMusic.currentMusic;
 
   useEffect(() => {
-    if (initialCurrentMusic) {
-      setCurrentMusic(initialCurrentMusic);
+    if (initialCurrentMusic.currentMusic) {
+      setCurrentMusic(initialCurrentMusic.currentMusic);
     }
   }, [initialCurrentMusic, setCurrentMusic]);
 
   useEffect(() => {
-    if (currentSong?.albumArt) {
-      const getFavicon = async () => {
-        const faviconUrl = await convertJpgToFavicon(currentSong.albumArt);
-        setFavicon(faviconUrl);
-      };
-      getFavicon();
-    }
+    const updateFavicon = async () => {
+      if (currentSong?.thumb) {
+        try {
+
+          const faviconUrl = await convertJpgToFavicon(currentSong.thumb);
+          setFavicon(faviconUrl);
+        } catch (error) {
+          console.error("Error converting favicon:", error);
+        }
+      }
+    };
+
+    void updateFavicon();
   }, [currentSong]);
 
   return (
@@ -47,7 +53,7 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={favicon ?? "/favicon.ico"} type="image/x-icon" />
-        <title>{`${currentSong?.title ?? "Nothing playing"} - ${currentSong?.artist ?? "Current Music"}`}</title>
+        <title>{`${currentSong?.title ?? "Nothing playing"} - ${currentSong?.grandparentTitle ?? "Current Music"}`}</title>
         <Meta />
         <Links />
       </head>

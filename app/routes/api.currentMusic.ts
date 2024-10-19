@@ -18,13 +18,13 @@ export async function loader() {
 
     const currentMusic: CurrentMusic = {
       ...session,
-      albumArt: session.thumb,
+      albumArt: `${import.meta.env.VITE_PLEX_SERVER_URL}${session.thumb}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}`,
       currentTime: session.viewOffset,
       isPlaying: true,
     };
 
-    const parsedResult = currentMusicSchema.safeParse(currentMusic);
 
+    const parsedResult = currentMusicSchema.safeParse(currentMusic);
     if (parsedResult.success) {
       return json({ currentMusic: parsedResult.data, isPlaying: true });
     } else {
