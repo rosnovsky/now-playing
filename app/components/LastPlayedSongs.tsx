@@ -2,7 +2,7 @@ import { useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { usePollData } from '~/hooks/usePollingData';
 import { songsSchema, type Song } from "~/types";
-import { StarRating } from './StarRating';
+import { TextRating } from './StarRating';
 
 const getTimeAgo = (timestamp: number): string => {
   const seconds = Math.floor((Date.now() - timestamp * 1000) / 1000);
@@ -108,10 +108,10 @@ export const LastPlayedSongs: React.FC = () => {
                   <h3 className="text-md font-semibold text-white truncate">{song.title}</h3>
                   <p className="text-xs text-gray-400 truncate">{song.grandparentTitle}</p>
                   <p className="text-xs text-gray-500 truncate">{song.parentTitle}</p>
-                  <StarRating rating={song.userRating ?? 0} />
+                  <TextRating rating={song.userRating ?? 0} />
                 </div>
                 <div className="text-right ml-2 flex flex-col items-end">
-                  <p className="text-xs text-gray-600 font-thin truncate mb-1">
+                  <p className="text-xs text-gray-500 font-thin truncate mb-1">
                     {song.lastViewedAt ? getTimeAgo(song.lastViewedAt) : 'Never played'}
                   </p>
                 </div>

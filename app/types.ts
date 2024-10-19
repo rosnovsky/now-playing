@@ -41,7 +41,7 @@ const streamSchema = z.object({
   streamType: z.number().int().nonnegative(),
   default: z.boolean(),
   codec: z.string(),
-  index: z.number().int().nonnegative(),
+  index: z.number().int().nonnegative().optional(),
   bitrate: z.number().int().positive(),
   bitDepth: z.number().int().positive().optional(),
   chromaLocation: z.string().optional(),
@@ -81,7 +81,7 @@ const currentMusicSchema = z.object({
   grandparentThumb: thumbSchema,
   grandparentTitle: z.string(),
   guid: guidSchema,
-  index: z.number().int().positive(),
+  index: z.number().int().positive().optional(),
   key: z.string(),
   lastViewedAt: z.number().int().positive().optional(),
   librarySectionID: z.union([z.string(), z.number()]), // Accept both string and number
@@ -100,7 +100,7 @@ const currentMusicSchema = z.object({
   thumb: thumbSchema,
   title: z.string(),
   type: z.literal('track'),
-  updatedAt: z.number().int().positive(),
+  updatedAt: z.number().int().positive().optional(),
   viewCount: z.number().int().nonnegative().optional(),
   viewOffset: z.number().int().nonnegative(),
   Media: z.array(mediaSchema.extend({
@@ -161,7 +161,7 @@ export const songSchema = z.object({
   grandparentTitle: z.string(),
   parentTitle: z.string(),
   summary: z.string().optional(),
-  index: z.number(),
+  index: z.number().optional(),
   parentIndex: z.number(),
   viewCount: z.number().optional(),
   lastViewedAt: z.number().optional(),
@@ -172,7 +172,7 @@ export const songSchema = z.object({
   grandparentThumb: z.string().optional(),
   duration: z.number(),
   addedAt: z.number(),
-  updatedAt: z.number(),
+  updatedAt: z.number().optional(),
   Media: z.array(z.object({
     id: z.number(),
     duration: z.number(),
@@ -207,7 +207,7 @@ const artistSchema = z.object({
   thumb: z.string(),
   art: z.string().nullable().optional(),
   addedAt: z.number(),
-  updatedAt: z.number(),
+  updatedAt: z.number().optional(),
 });
 
 export const artistsSchema = z.array(artistSchema);
@@ -223,14 +223,14 @@ const albumSchema = z.object({
   title: z.string(),
   parentTitle: z.string(),
   summary: z.string(),
-  index: z.number(),
+  index: z.number().optional(),
   viewCount: z.number(),
   year: z.number(),
   thumb: z.string(),
   art: z.string().nullable().optional(),
   parentThumb: z.string(),
   addedAt: z.number(),
-  updatedAt: z.number(),
+  updatedAt: z.number().optional(),
 });
 
 export const albumsSchema = z.array(albumSchema);

@@ -1,29 +1,30 @@
-import { Star, StarHalf } from 'lucide-react';
+import { Star, StarHalf } from "lucide-react";
 
-const convertTo5StarRating = (userRating: number) => {
-  if (userRating === undefined) return 0;
-  const convertedRating = userRating / 2;
-  return Math.round(convertedRating * 2) / 2;
+const getRatingText = (rating: number) => {
+  if (rating < 0 || rating > 10) return "Invalid rating";
+
+  switch (true) {
+    case rating >= 10:
+      return <><Star className="w-4 h-4 text-gray-400 fill-current mr-1" /><span>Would listen on repeat</span></>;
+    case rating >= 8:
+      return <><Star className="w-4 h-4 text-gray-500 fill-current mr-1" /><span>Would never skip</span></>;
+    case rating >= 6:
+      return <><Star className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Happy to hear every time</span></>;
+    case rating >= 4:
+      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Glad to hear from time to time</span></>;
+    case rating >= 2:
+      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Listen or skip depending on mood</span></>;
+    default:
+      return "Not rated yet";
+  }
 };
 
-export const StarRating = ({ rating }: { rating: number }) => {
-  const starRating = convertTo5StarRating(rating);
-  const fullStars = Math.floor(starRating);
-  const hasHalfStar = starRating % 1 !== 0;
+export const TextRating = ({ rating }: { rating: number }) => {
+  const ratingText = getRatingText(rating);
 
   return (
-    <div className="flex items-center">
-      {[...Array(5)].map((_, i) => (
-        <span key={i}>
-          {i < fullStars ? (
-            <Star className="w-4 h-4 text-gray-600 fill-current" />
-          ) : i === fullStars && hasHalfStar ? (
-            <StarHalf className="w-4 h-4 text-gray-600 fill-current" />
-          ) : (
-            <Star className="w-4 h-4 text-gray-800" />
-          )}
-        </span>
-      ))}
+    <div className="inline-flex items-center text-sm font-medium text-gray-500">
+      {ratingText}
     </div>
   );
 };
