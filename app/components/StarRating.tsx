@@ -11,9 +11,9 @@ const getRatingText = (rating: number) => {
     case rating >= 6:
       return <><Star className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Happy to hear every time</span></>;
     case rating >= 4:
-      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Glad to hear from time to time</span></>;
+      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Glad to hear sometimes</span></>;
     case rating >= 2:
-      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Listen or skip depending on mood</span></>;
+      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Listen if in the mood</span></>;
     default:
       return "Not rated yet";
   }
