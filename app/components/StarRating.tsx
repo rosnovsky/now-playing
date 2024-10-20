@@ -5,15 +5,15 @@ const getRatingText = (rating: number) => {
 
   switch (true) {
     case rating >= 10:
-      return <><Star className="w-4 h-4 text-gray-400 fill-current mr-1" /><span>Would listen on repeat</span></>;
+      return <><Star className="w-4 h-4 text-amber-200/70 fill-current mr-1" /><span>ON REPEAT!</span></>;
     case rating >= 8:
-      return <><Star className="w-4 h-4 text-gray-500 fill-current mr-1" /><span>Would never skip</span></>;
+      return <><Star className="w-4 h-4 text-gray-300 fill-current mr-1" /><span>never skip</span></>;
     case rating >= 6:
-      return <><Star className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Happy to hear every time</span></>;
+      return <><Star className="w-4 h-4 text-gray-500 fill-current mr-1" /><span>Happy to hear</span></>;
     case rating >= 4:
-      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Glad to hear sometimes</span></>;
+      return <><StarHalf className="w-4 h-4 text-gray-700 fill-current mr-1" /><span>Glad to hear sometimes</span></>;
     case rating >= 2:
-      return <><StarHalf className="w-4 h-4 text-gray-600 fill-current mr-1" /><span>Listen if in the mood</span></>;
+      return <><StarHalf className="w-4 h-4 text-gray-900 fill-current mr-1" /><span>Listen if in the mood</span></>;
     default:
       return "Not rated yet";
   }
