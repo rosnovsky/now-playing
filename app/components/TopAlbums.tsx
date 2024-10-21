@@ -8,7 +8,7 @@ export const TopAlbums: React.FC = () => {
   const { data: albums, isLoading, error } = usePollData<Album[]>('albums', {
     schema: albumsSchema,
     headers,
-    interval: 1000
+    interval: 120000
   });
 
   if (isLoading) {

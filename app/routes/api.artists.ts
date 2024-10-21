@@ -11,18 +11,28 @@ export async function loader({ request }: { request: Request }) {
   });
   const data = await response.json() as { MediaContainer: { Metadata: Artist[] } };
 
-  const artists = data.MediaContainer.Metadata.map((item: Artist) => ({
-    ratingKey: item.ratingKey,
-    guid: item.guid,
-    type: item.type,
-    title: item.title,
-    summary: item.summary,
-    viewCount: item.viewCount || 0,
-    thumb: item.thumb ? `${import.meta.env.VITE_PLEX_SERVER_URL}${item.thumb}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}` : null,
-    art: item.art ? `${import.meta.env.VITE_PLEX_SERVER_URL}${item.art}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}` : null,
-    addedAt: item.addedAt,
-    updatedAt: item.updatedAt,
-  }));
+
+
+  const artists = data.MediaContainer.Metadata.map((item: Artist) => {
+    const rewriteImageUrl = (url: string | undefined) => {
+      if (!url) return null;
+      // Remove the leading slash if it exists
+      const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+      return `/api/images/${cleanPath}`;
+    };
+
+    return {
+      ratingKey: item.ratingKey,
+      guid: item.guid,
+      type: item.type,
+      title: item.title,
+      summary: item.summary,
+      viewCount: item.viewCount || 0,
+      thumb: rewriteImageUrl(item.thumb) ?? null,
+      addedAt: item.addedAt,
+      updatedAt: item.updatedAt,
+    }
+  });
 
   const validatedArtists = artistsSchema.parse(artists);
 

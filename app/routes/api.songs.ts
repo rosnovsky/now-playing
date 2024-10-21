@@ -1,3 +1,4 @@
+// api.songs.ts
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
 import { Song, songsSchema } from "~/types";
@@ -19,36 +20,47 @@ export async function loader({ request }: { request: Request }) {
 
     const data = await response.json();
 
-    const songs: Song[] = data.MediaContainer.Metadata.map((item: Song) => ({
-      ratingKey: item.ratingKey,
-      key: item.key,
-      parentRatingKey: item.parentRatingKey,
-      grandparentRatingKey: item.grandparentRatingKey,
-      guid: item.guid,
-      parentGuid: item.parentGuid,
-      grandparentGuid: item.grandparentGuid,
-      type: item.type,
-      title: item.title,
-      grandparentTitle: item.grandparentTitle,
-      parentTitle: item.parentTitle,
-      summary: item.summary,
-      index: item.index,
-      parentIndex: item.parentIndex,
-      viewCount: item.viewCount,
-      lastViewedAt: item.lastViewedAt,
-      parentYear: item.parentYear,
-      thumb: `${process.env.VITE_PLEX_SERVER_URL}${item.thumb}?X-Plex-Token=${process.env.VITE_PLEX_TOKEN}`,
-      art: item.art ? `${process.env.VITE_PLEX_SERVER_URL}${item.art}?X-Plex-Token=${process.env.VITE_PLEX_TOKEN}` : undefined,
-      parentThumb: `${process.env.VITE_PLEX_SERVER_URL}${item.parentThumb}?X-Plex-Token=${process.env.VITE_PLEX_TOKEN}`,
-      grandparentThumb: item.grandparentThumb ? `${process.env.VITE_PLEX_SERVER_URL}${item.grandparentThumb}?X-Plex-Token=${process.env.VITE_PLEX_TOKEN}` : undefined,
-      duration: item.duration,
-      addedAt: item.addedAt,
-      updatedAt: item.updatedAt,
-      Media: item.Media,
-      userRating: item.userRating,
-    }));
+    const songs: Song[] = data.MediaContainer.Metadata.map((item: Song) => {
+      // Function to rewrite image URLs
+      const rewriteImageUrl = (url: string | undefined) => {
+        if (!url) return undefined;
+        // Remove the leading slash if it exists
+        const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+        return `/api/images/${cleanPath}`;
+      };
+
+      return {
+        ratingKey: item.ratingKey,
+        key: item.key,
+        parentRatingKey: item.parentRatingKey,
+        grandparentRatingKey: item.grandparentRatingKey,
+        guid: item.guid,
+        parentGuid: item.parentGuid,
+        grandparentGuid: item.grandparentGuid,
+        type: item.type,
+        title: item.title,
+        grandparentTitle: item.grandparentTitle,
+        parentTitle: item.parentTitle,
+        summary: item.summary,
+        index: item.index,
+        parentIndex: item.parentIndex,
+        viewCount: item.viewCount,
+        lastViewedAt: item.lastViewedAt,
+        parentYear: item.parentYear,
+        thumb: rewriteImageUrl(item.thumb),
+        art: rewriteImageUrl(item.art),
+        parentThumb: rewriteImageUrl(item.parentThumb),
+        grandparentThumb: rewriteImageUrl(item.grandparentThumb),
+        duration: item.duration,
+        addedAt: item.addedAt,
+        updatedAt: item.updatedAt,
+        Media: item.Media,
+        userRating: item.userRating,
+      };
+    });
 
     const parsedResult = songsSchema.safeParse(songs);
+
 
     if (!parsedResult.success) {
       console.error("Validation error:", parsedResult.error);

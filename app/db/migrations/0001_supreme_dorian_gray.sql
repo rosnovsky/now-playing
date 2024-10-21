@@ -1,0 +1,1 @@
+ALTER TABLE "play_history" ALTER COLUMN "song_id" SET DATA TYPE uuid;

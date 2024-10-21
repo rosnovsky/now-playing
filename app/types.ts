@@ -176,7 +176,7 @@ export const songSchema = z.object({
   Media: z.array(z.object({
     id: z.number(),
     duration: z.number(),
-    bitrate: z.number(),
+    bitrate: z.number().optional(),
     audioChannels: z.number(),
     audioCodec: z.string(),
     container: z.string(),

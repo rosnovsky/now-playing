@@ -8,13 +8,11 @@ const isCurrentMusic = (song: SongOrCurrentMusic): song is CurrentMusic => {
 };
 
 const QualityBadge: React.FC<{ media?: SongOrCurrentMusic["Media"] }> = ({ media }) => {
-  let quality = 'Unknown';
+  let quality = 'Lossy';
   if (media && media[0]) {
     const { audioCodec, bitrate } = media[0];
     if (audioCodec === 'flac' || audioCodec === 'alac') {
       quality = (bitrate ?? 0) > 1000 ? 'Hi-Res' : 'Lossless';
-    } else if (audioCodec) {
-      quality = audioCodec.toUpperCase();
     }
   }
   return (

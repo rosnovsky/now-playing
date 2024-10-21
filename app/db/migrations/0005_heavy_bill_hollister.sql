@@ -1,0 +1,1 @@
+ALTER TABLE "song_stats" DROP COLUMN IF EXISTS "user_rating";
