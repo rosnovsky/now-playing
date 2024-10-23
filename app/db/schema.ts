@@ -61,3 +61,21 @@ export const artistStats = pgTable('artist_stats', {
   playCount: integer('play_count').notNull().default(0),
   lastPlayedAt: timestamp('last_played_at'),
 });
+
+export const processingState = pgTable('processing_state', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  lastProcessedAt: timestamp('last_processed_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const processingRuns = pgTable('processing_runs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  startedAt: timestamp('started_at').notNull(),
+  completedAt: timestamp('completed_at'),
+  status: text('status').notNull(), // 'running', 'completed', 'failed'
+  songsProcessed: integer('songs_processed').notNull().default(0),
+  error: text('error'),
+  durationMs: integer('duration_ms'),
+  processingPeriodStart: timestamp('processing_period_start').notNull(),
+  processingPeriodEnd: timestamp('processing_period_end').notNull(),
+});

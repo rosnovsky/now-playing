@@ -111,7 +111,7 @@ export async function recordPlay(songData: SongData) {
       title: songData.title,
       artist: songData.grandparentTitle,
       album: songData.parentTitle,
-      playedAt: new Date(), // Current time when the play is recorded
+      playedAt: new Date(),
     });
 
     // Update song stats
