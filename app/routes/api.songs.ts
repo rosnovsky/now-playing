@@ -27,32 +27,27 @@ export async function loader({ request }: { request: Request }) {
       };
 
       return {
+        title: item.title,
+        grandparentTitle: item.grandparentTitle,
+        parentTitle: item.parentTitle,
+        albumArt: rewriteImageUrl(item.thumb),
+        duration: item.duration,
+        isPlaying: true,
         ratingKey: item.ratingKey,
         key: item.key,
         parentRatingKey: item.parentRatingKey,
         grandparentRatingKey: item.grandparentRatingKey,
-        guid: item.guid,
-        parentGuid: item.parentGuid,
-        grandparentGuid: item.grandparentGuid,
-        type: item.type,
-        title: item.title,
-        grandparentTitle: item.grandparentTitle,
-        parentTitle: item.parentTitle,
-        summary: item.summary,
-        index: item.index,
-        parentIndex: item.parentIndex,
         viewCount: item.viewCount,
-        lastViewedAt: item.lastViewedAt,
-        parentYear: item.parentYear,
         thumb: rewriteImageUrl(item.thumb),
-        art: rewriteImageUrl(item.art),
+        art: rewriteImageUrl(item.albumArt),
         parentThumb: rewriteImageUrl(item.parentThumb),
-        grandparentThumb: rewriteImageUrl(item.grandparentThumb),
-        duration: item.duration,
         addedAt: item.addedAt,
         updatedAt: item.updatedAt,
-        Media: item.Media,
         userRating: item.userRating,
+        Media: item.Media ? [{
+          audioCodec: item.Media[0].audioCodec,
+          bitrate: item.Media[0].bitrate
+        }] : undefined
       };
     });
 

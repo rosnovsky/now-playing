@@ -4,20 +4,24 @@ import { generatePng } from "~/utils/og.server";
 
 export const loader: LoaderFunction = async () => {
   try {
-    const [currentMusicResponse, albumsResponse] = await Promise.all([
+    const [currentMusicResponse, lastSong, albumsResponse] = await Promise.all([
       fetch(`${import.meta.env.VITE_API_URL}/api/currentMusic`),
+      fetch(`${import.meta.env.VITE_API_URL}/api/songs?sort=lastViewedAt:desc&limit=1`),
       fetch(`${import.meta.env.VITE_API_URL}/api/albums`)
     ]);
 
-    const [currentMusicData, albums] = await Promise.all([
+    const [currentMusicData, lastSongData, albums] = await Promise.all([
       currentMusicResponse.json(),
+      lastSong.json(),
       albumsResponse.json()
     ]);
+
+    console.log({ lastSongData })
 
     const png = await generatePng(
       <OpenGraphImage
         albums={albums}
-        currentMusic={currentMusicData.currentMusic}
+        currentMusic={currentMusicData.currentMusic ?? lastSongData[0]}
       />
     );
 
