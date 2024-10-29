@@ -1,1 +1,0 @@
-ALTER TABLE "songs" ADD COLUMN "plex_id" text;

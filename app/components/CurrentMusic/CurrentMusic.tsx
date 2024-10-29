@@ -42,7 +42,7 @@ export const CurrentMusicComponent: React.FC = () => {
     <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
       <h2 className="text-xl font-bold text-green-400 mb-2 flex items-center">
         {currentMusic.isPlaying ? <Play className="w-5 h-5 mr-2" /> : <Pause className="w-5 h-5 mr-2" />}
-        Now Playing
+        Now Listening
       </h2>
       <SongComponent song={currentMusic} />
     </div>

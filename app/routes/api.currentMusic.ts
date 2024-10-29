@@ -1,9 +1,5 @@
 import { json } from "@remix-run/node";
-import { recordPlay } from "~/db/queries";
 import { CurrentMusic, currentMusicSchema } from "~/types";
-
-// We'll use this to store the last recorded play
-let lastRecordedPlay: { ratingKey: string; timestamp: number } | null = null;
 
 export async function loader() {
   try {
@@ -13,11 +9,9 @@ export async function loader() {
       }
     });
     const data = await response.json();
-
     const session = data.MediaContainer.Metadata?.[0];
 
     if (!session) {
-      lastRecordedPlay = null; // Reset when nothing is playing
       return json({ currentMusic: null, isPlaying: false });
     }
 
@@ -27,27 +21,24 @@ export async function loader() {
       return `/api/images/${cleanPath}`;
     };
 
+    // Only extract the fields we actually need for display
     const currentMusic: CurrentMusic = {
-      ...session,
+      title: session.title,
+      grandparentTitle: session.grandparentTitle, // Artist
+      parentTitle: session.parentTitle, // Album
       albumArt: rewriteImageUrl(session.thumb),
       currentTime: session.viewOffset,
+      duration: session.duration,
       isPlaying: true,
+      Media: session.Media ? [{
+        audioCodec: session.Media[0].audioCodec,
+        bitrate: session.Media[0].bitrate
+      }] : undefined
     };
 
     const parsedResult = currentMusicSchema.safeParse(currentMusic);
     if (parsedResult.success) {
-      const now = Date.now();
-      const songData = parsedResult.data;
-
-      // Only record the play if it's a new song or if it's been more than 5 minutes since the last recording
-      if (!lastRecordedPlay ||
-        lastRecordedPlay.ratingKey !== songData.ratingKey ||
-        now - lastRecordedPlay.timestamp > 5 * 60 * 1000) {
-        await recordPlay(songData);
-        lastRecordedPlay = { ratingKey: songData.ratingKey, timestamp: now };
-      }
-
-      return json({ currentMusic: songData, isPlaying: true });
+      return json({ currentMusic: parsedResult.data, isPlaying: true });
     } else {
       console.error("Validation error:", parsedResult.error);
       return json({ currentMusic: null, isPlaying: false });
