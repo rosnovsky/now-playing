@@ -26,8 +26,6 @@ export async function loader({ request }: { request: Request }) {
         return `/api/images/${cleanPath}`;
       };
 
-      console.log({ item });
-
       return {
         title: item.title,
         grandparentTitle: item.grandparentTitle,

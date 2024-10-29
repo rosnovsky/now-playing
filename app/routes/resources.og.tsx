@@ -16,8 +16,6 @@ export const loader: LoaderFunction = async () => {
       albumsResponse.json()
     ]);
 
-    console.log({ lastSongData })
-
     const png = await generatePng(
       <OpenGraphImage
         albums={albums}
