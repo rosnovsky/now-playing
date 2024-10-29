@@ -26,18 +26,20 @@ export async function loader({ request }: { request: Request }) {
         return `/api/images/${cleanPath}`;
       };
 
+      console.log({ item });
+
       return {
         title: item.title,
         grandparentTitle: item.grandparentTitle,
         parentTitle: item.parentTitle,
         albumArt: rewriteImageUrl(item.thumb),
         duration: item.duration,
-        isPlaying: true,
         ratingKey: item.ratingKey,
         key: item.key,
         parentRatingKey: item.parentRatingKey,
         grandparentRatingKey: item.grandparentRatingKey,
-        viewCount: item.viewCount,
+        viewCount: item.viewCount || 0,
+        lastViewedAt: item.lastViewedAt,
         thumb: rewriteImageUrl(item.thumb),
         art: rewriteImageUrl(item.albumArt),
         parentThumb: rewriteImageUrl(item.parentThumb),

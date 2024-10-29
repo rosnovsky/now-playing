@@ -51,6 +51,7 @@ export const songSchema = z.object({
   parentRatingKey: z.string(),
   grandparentRatingKey: z.string(),
   viewCount: z.number(),
+  lastViewedAt: z.number().optional(),
   thumb: thumbSchema,
   art: thumbSchema.nullable().optional(),
   parentThumb: thumbSchema,
