@@ -1,5 +1,6 @@
 export async function convertJpgToFavicon(imageUrl: string): Promise<string> {
-  const plexImageUrl = `${import.meta.env.VITE_PLEX_SERVER_URL}${imageUrl}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}`;
+  const plexImageUrl = `${import.meta.env.VITE_API_URL}${imageUrl}`;
+
   const response = await fetch(plexImageUrl);
   const blob = await response.blob();
 
@@ -15,7 +16,6 @@ export async function convertJpgToFavicon(imageUrl: string): Promise<string> {
       ctx.drawImage(img, 0, 0, 32, 32);
 
       canvas.toBlob((blob) => {
-        // Create object URL
         const url = URL.createObjectURL(blob);
         resolve(url);
       }, 'image/png');

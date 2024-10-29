@@ -21,11 +21,10 @@ export async function loader() {
       return `/api/images/${cleanPath}`;
     };
 
-    // Only extract the fields we actually need for display
     const currentMusic: CurrentMusic = {
       title: session.title,
-      grandparentTitle: session.grandparentTitle, // Artist
-      parentTitle: session.parentTitle, // Album
+      grandparentTitle: session.grandparentTitle,
+      parentTitle: session.parentTitle,
       albumArt: rewriteImageUrl(session.thumb),
       currentTime: session.viewOffset,
       duration: session.duration,

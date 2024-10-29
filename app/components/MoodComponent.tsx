@@ -56,7 +56,7 @@ export const MoodComponent = () => {
           </div>
           <div>
             <p className="text-gray-400">No recent songs</p>
-            <p className="text-sm text-gray-500">Play some music to see the mood</p>
+            <p className="text-sm text-gray-500">Wait till I play some music to see the mood</p>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ export const MoodComponent = () => {
       <div className="flex items-start">
         <div>
           <p className="text-green-400 font-medium mb-1">Current Mood</p>
-          <p className="text-gray-600 text-xs mb-1">Based on the recent listening history</p>
+          <p className="text-gray-600 text-xs mb-1">Based on the recent listening history, by <a href="https://claude.ai" target="_blank" rel="noreferrer">Claude</a> LLM</p>
           <blockquote className="text-sm text-gray-300 italic">&ldquo;{moodStatement}&rdquo;</blockquote>
         </div>
       </div>

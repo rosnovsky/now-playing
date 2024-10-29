@@ -9,14 +9,17 @@ export async function loader({ request }: { request: Request }) {
       "Accept": "application/json",
     },
   });
-  const data = await response.json() as { MediaContainer: { Metadata: Album[] } };
+  const data = await response.json() as {
+    MediaContainer: {
+      data: Album[]
+    }
+  };
 
 
 
   const albums = data.MediaContainer.Metadata.map((item: Album) => {
     const rewriteImageUrl = (url: string | undefined) => {
       if (!url) return undefined;
-      // Remove the leading slash if it exists
       const cleanPath = url.startsWith('/') ? url.slice(1) : url;
       return `/api/images/${cleanPath}`;
     };

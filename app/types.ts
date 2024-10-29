@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-// Basic schemas
 const thumbSchema = z.string();
 
-// Media schema
 const mediaSchema = z.object({
   id: z.string(), // Changed from number to string
   duration: z.number().int().positive(),
@@ -21,7 +19,6 @@ const mediaSchema = z.object({
   videoProfile: z.string(),
 }).partial();
 
-// Current Music schema (minimal version)
 const currentMusicSchema = z.object({
   title: z.string(),
   grandparentTitle: z.string(), // Artist
@@ -33,7 +30,6 @@ const currentMusicSchema = z.object({
   Media: z.array(mediaSchema).optional(),
 }).partial();
 
-// Response schema (unchanged)
 const currentMusicResponseSchema = z.object({
   currentMusic: currentMusicSchema.nullable(),
   isPlaying: z.boolean(),
@@ -45,48 +41,25 @@ export type CurrentMusicResponse = z.infer<typeof currentMusicResponseSchema>;
 export { currentMusicResponseSchema, currentMusicSchema };
 
 export const songSchema = z.object({
+  title: z.string(),
+  grandparentTitle: z.string(),
+  parentTitle: z.string(),
+  albumArt: thumbSchema,
+  duration: z.number(),
   ratingKey: z.string(),
   key: z.string(),
   parentRatingKey: z.string(),
   grandparentRatingKey: z.string(),
-  guid: z.string(),
-  parentGuid: z.string(),
-  grandparentGuid: z.string(),
-  type: z.literal('track'),
-  title: z.string(),
-  grandparentTitle: z.string(),
-  parentTitle: z.string(),
-  summary: z.string().optional(),
-  index: z.number().optional(),
-  parentIndex: z.number(),
-  viewCount: z.number().optional(),
+  viewCount: z.number(),
   lastViewedAt: z.number().optional(),
-  parentYear: z.number().optional(),
-  thumb: z.string(),
-  art: z.string().optional(),
-  parentThumb: z.string(),
-  grandparentThumb: z.string().optional(),
-  duration: z.number(),
+  thumb: thumbSchema,
+  art: thumbSchema.nullable().optional(),
+  parentThumb: thumbSchema,
+  grandparentThumb: thumbSchema.nullable().optional(),
   addedAt: z.number(),
   updatedAt: z.number().optional(),
-  Media: z.array(z.object({
-    id: z.number(),
-    duration: z.number(),
-    bitrate: z.number().optional(),
-    audioChannels: z.number(),
-    audioCodec: z.string(),
-    container: z.string(),
-    Part: z.array(z.object({
-      id: z.number(),
-      key: z.string(),
-      duration: z.number(),
-      file: z.string(),
-      size: z.number(),
-      container: z.string(),
-      // Add other relevant fields
-    }))
-  })),
   userRating: z.number().optional(),
+  Media: z.array(mediaSchema)
 });
 
 export type Song = z.infer<typeof songSchema>;

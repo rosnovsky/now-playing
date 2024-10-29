@@ -20,7 +20,6 @@ export const loader: LoaderFunction = async ({ params }) => {
     const cachedImageUrl = await kv.get(cacheKey);
 
     if (cachedImageUrl) {
-      console.log("Cache hit:", cacheKey);
       const contentType = response.headers.get("content-type") || "image/jpeg";
       const imageData = await response.arrayBuffer();
 
@@ -32,12 +31,11 @@ export const loader: LoaderFunction = async ({ params }) => {
       });
     }
 
-    console.log("Cache miss:", imageUrl);
     const contentType = response.headers.get("content-type") || "image/jpeg";
     const imageData = await response.arrayBuffer();
 
     kv.set(cacheKey, imageUrl, {
-      ex: 604800, // 7 days
+      ex: 604800,
     })
 
     return new Response(imageData, {
