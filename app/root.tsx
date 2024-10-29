@@ -33,10 +33,9 @@ export default function App() {
 
   useEffect(() => {
     const updateFavicon = async () => {
-      if (currentSong?.thumb) {
+      if (currentSong?.albumArt || currentSong?.thumb) {
         try {
-
-          const faviconUrl = await convertJpgToFavicon(currentSong.thumb);
+          const faviconUrl = await convertJpgToFavicon(currentSong.albumArt ?? currentSong.thumb);
           setFavicon(faviconUrl);
         } catch (error) {
           console.error("Error converting favicon:", error);

@@ -43,7 +43,7 @@ export const useGenerateVerse = (mediaItems: MediaItem[]) => {
             },
             body: JSON.stringify({
               prompt,
-              model: 'claude-3.5', // or whichever model is appropriate
+              model: 'claude-3.5',
               max_tokens_to_sample: 300,
               temperature: 0.7,
             })

@@ -16,7 +16,6 @@ export async function loader({ request }: { request: Request }) {
   const artists = data.MediaContainer.Metadata.map((item: Artist) => {
     const rewriteImageUrl = (url: string | undefined) => {
       if (!url) return null;
-      // Remove the leading slash if it exists
       const cleanPath = url.startsWith('/') ? url.slice(1) : url;
       return `/api/images/${cleanPath}`;
     };

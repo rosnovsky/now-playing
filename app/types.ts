@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-// Basic schemas
 const thumbSchema = z.string();
 
-// Media schema
 const mediaSchema = z.object({
   id: z.string(), // Changed from number to string
   duration: z.number().int().positive(),
@@ -21,7 +19,6 @@ const mediaSchema = z.object({
   videoProfile: z.string(),
 }).partial();
 
-// Current Music schema (minimal version)
 const currentMusicSchema = z.object({
   title: z.string(),
   grandparentTitle: z.string(), // Artist
@@ -33,7 +30,6 @@ const currentMusicSchema = z.object({
   Media: z.array(mediaSchema).optional(),
 }).partial();
 
-// Response schema (unchanged)
 const currentMusicResponseSchema = z.object({
   currentMusic: currentMusicSchema.nullable(),
   isPlaying: z.boolean(),
@@ -83,7 +79,6 @@ export const songSchema = z.object({
       file: z.string(),
       size: z.number(),
       container: z.string(),
-      // Add other relevant fields
     }))
   })),
   userRating: z.number().optional(),

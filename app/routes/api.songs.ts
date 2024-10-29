@@ -1,4 +1,3 @@
-// api.songs.ts
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
 import { Song, songsSchema } from "~/types";
@@ -21,10 +20,8 @@ export async function loader({ request }: { request: Request }) {
     const data = await response.json();
 
     const songs: Song[] = data.MediaContainer.Metadata.map((item: Song) => {
-      // Function to rewrite image URLs
       const rewriteImageUrl = (url: string | undefined) => {
         if (!url) return undefined;
-        // Remove the leading slash if it exists
         const cleanPath = url.startsWith('/') ? url.slice(1) : url;
         return `/api/images/${cleanPath}`;
       };

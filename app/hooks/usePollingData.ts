@@ -54,7 +54,7 @@ export const usePollData = <T>(dataType: DataType | string, options: UsePollData
 
   useEffect(() => {
     if (!isInitialDataLoaded) {
-      fetchData(true);  // Force load initial data
+      fetchData(true);
       setIsInitialDataLoaded(true);
     } else {
       const pollInterval = setInterval(() => fetchData(), interval);

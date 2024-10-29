@@ -37,7 +37,7 @@ export const loader: LoaderFunction = async ({ params }) => {
     const imageData = await response.arrayBuffer();
 
     kv.set(cacheKey, imageUrl, {
-      ex: 604800, // 7 days
+      ex: 604800,
     })
 
     return new Response(imageData, {
