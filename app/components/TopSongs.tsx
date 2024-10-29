@@ -1,7 +1,6 @@
 import { useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { usePollData } from '~/hooks/usePollingData';
-import { ErrorBoundary } from '~/root';
 import { songsSchema, type Song } from "~/types";
 
 export const TopSongs: React.FC = () => {
@@ -40,7 +39,7 @@ export const TopSongs: React.FC = () => {
   }
 
   if (error) {
-    return <ErrorBoundary />;
+    return "ERROR!"
   }
 
   if (!songs || songs.length === 0) {
@@ -52,6 +51,9 @@ export const TopSongs: React.FC = () => {
       <ul className="space-y-4">
         {songs.slice(0, 10).map((song, index) => (
           <li key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+            {/* TODO: How it should work: */}
+            {/* <SongComponent song={song} /> */}
+
             <div className="flex items-center p-4">
               <div className="flex-shrink-0 mr-4">
                 <img src={song.thumb} alt={`${song.title} cover`} className="w-20 h-20 object-cover rounded-md" />

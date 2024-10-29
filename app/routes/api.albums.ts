@@ -11,25 +11,35 @@ export async function loader({ request }: { request: Request }) {
   });
   const data = await response.json() as { MediaContainer: { Metadata: Album[] } };
 
-  const albums = data.MediaContainer.Metadata.map((item: Album) => ({
-    ratingKey: item.ratingKey,
-    key: item.key,
-    parentRatingKey: item.parentRatingKey,
-    guid: item.guid,
-    parentGuid: item.parentGuid,
-    type: item.type,
-    title: item.title,
-    parentTitle: item.parentTitle,
-    summary: item.summary || "",
-    index: item.index,
-    viewCount: item.viewCount || 0,
-    year: item.year,
-    thumb: item.thumb ? `${import.meta.env.VITE_PLEX_SERVER_URL}${item.thumb}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}` : null,
-    art: item.art ? `${import.meta.env.VITE_PLEX_SERVER_URL}${item.art}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}` : null,
-    parentThumb: item.parentThumb ? `${import.meta.env.VITE_PLEX_SERVER_URL}${item.parentThumb}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}` : null,
-    addedAt: item.addedAt,
-    updatedAt: item.updatedAt,
-  }));
+
+
+  const albums = data.MediaContainer.Metadata.map((item: Album) => {
+    const rewriteImageUrl = (url: string | undefined) => {
+      if (!url) return undefined;
+      // Remove the leading slash if it exists
+      const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+      return `/api/images/${cleanPath}`;
+    };
+
+    return {
+      ratingKey: item.ratingKey,
+      key: item.key,
+      parentRatingKey: item.parentRatingKey,
+      guid: item.guid,
+      parentGuid: item.parentGuid,
+      type: item.type,
+      title: item.title,
+      parentTitle: item.parentTitle,
+      summary: item.summary || "",
+      index: item.index,
+      viewCount: item.viewCount || 0,
+      year: item.year,
+      thumb: rewriteImageUrl(item.thumb) ?? null,
+      parentThumb: rewriteImageUrl(item.parentThumb) ?? null,
+      addedAt: item.addedAt,
+      updatedAt: item.updatedAt,
+    }
+  });
 
   const validatedAlbums = albumsSchema.parse(albums);
 

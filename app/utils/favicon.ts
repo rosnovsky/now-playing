@@ -1,5 +1,6 @@
 export async function convertJpgToFavicon(imageUrl: string): Promise<string> {
-  const response = await fetch(imageUrl);
+  const plexImageUrl = `${import.meta.env.VITE_PLEX_SERVER_URL}${imageUrl}?X-Plex-Token=${import.meta.env.VITE_PLEX_TOKEN}`;
+  const response = await fetch(plexImageUrl);
   const blob = await response.blob();
 
   const img = new Image();

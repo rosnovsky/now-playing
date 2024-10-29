@@ -1,7 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import React from "react";
 import { usePollData } from "~/hooks/usePollingData";
-import { ErrorBoundary } from "~/root";
 import { albumsSchema, type Album } from "~/types";
 
 export const TopAlbums: React.FC = () => {
@@ -9,7 +8,7 @@ export const TopAlbums: React.FC = () => {
   const { data: albums, isLoading, error } = usePollData<Album[]>('albums', {
     schema: albumsSchema,
     headers,
-    interval: 1000
+    interval: 120000
   });
 
   if (isLoading) {
@@ -39,7 +38,7 @@ export const TopAlbums: React.FC = () => {
   }
 
   if (error) {
-    return <ErrorBoundary />;
+    return "ERROR!"
   }
 
   return (

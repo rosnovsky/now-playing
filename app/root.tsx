@@ -4,65 +4,62 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useRouteError
+  useLoaderData,
 } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { Song } from "./routes/api.songs";
+import { CurrentMusic } from "~/types";
 import { useStore } from "./store";
 import "./tailwind.css";
 import { convertJpgToFavicon } from "./utils/favicon";
 
-// export const links: LinksFunction = () => [
-//   { rel: "stylesheet", href: styles },
-// ];
-//
+export const loader = async () => {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/currentMusic`);
+  const initialCurrentMusic = await response.json();
+  return { initialCurrentMusic };
+};
 
 export default function App() {
+  const { initialCurrentMusic } = useLoaderData<{ initialCurrentMusic: { currentMusic: CurrentMusic | null, isPlaying: boolean } }>();
   const [favicon, setFavicon] = useState<string | null>(null);
-  const data = useStore()
+  const { currentMusic, setCurrentMusic } = useStore();
 
-  const currentSong: Song = data?.songs?.[0];
+  const currentSong: CurrentMusic | null = currentMusic ?? initialCurrentMusic.currentMusic;
 
   useEffect(() => {
-    const getFavicon = async () => {
-      const faviconUrl = await convertJpgToFavicon(currentSong.albumArt);
-      setFavicon(faviconUrl);
+    if (initialCurrentMusic.currentMusic) {
+      setCurrentMusic(initialCurrentMusic.currentMusic);
     }
-    getFavicon();
-  }, [currentSong])
+  }, [initialCurrentMusic, setCurrentMusic]);
 
+  useEffect(() => {
+    const updateFavicon = async () => {
+      if (currentSong?.thumb) {
+        try {
+
+          const faviconUrl = await convertJpgToFavicon(currentSong.thumb);
+          setFavicon(faviconUrl);
+        } catch (error) {
+          console.error("Error converting favicon:", error);
+        }
+      }
+    };
+
+    void updateFavicon();
+  }, [currentSong]);
 
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href={favicon ?? "/favicon.ico"} type="blob" />
-        <title>{`${currentSong?.title ?? "Nothing playing"} - ${currentSong?.artist ?? "Current Music"}`}</title>
+        <link rel="icon" href={favicon ?? "/favicon.ico"} type="image/x-icon" />
+        <title>{`${currentSong?.title ?? "Nothing playing"} - ${currentSong?.grandparentTitle ?? "Current Music"}`}</title>
         <Meta />
         <Links />
       </head>
       <body>
         <Outlet />
         <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  console.error(error);
-  return (
-    <html lang="en">
-      <head>
-        <title>Oh no!</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
         <Scripts />
       </body>
     </html>

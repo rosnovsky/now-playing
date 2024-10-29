@@ -1,9 +1,8 @@
 import { json } from "@remix-run/node";
-import { CurrentMusicComponent } from "~/components/CurrentMusic";
+import { CurrentMusicComponent } from "~/components/CurrentMusic/";
 import { LastPlayedSongs } from "~/components/LastPlayedSongs";
-// import { LastPlayedSongs } from "~/components/LastPlayedSongs";
+import { MoodComponent } from "~/components/MoodComponent";
 import { TopAlbums } from "~/components/TopAlbums";
-// import { TopSongs } from "~/components/TopSongs";
 import { TopArtists } from "~/components/TopArtists";
 import { TopSongs } from "~/components/TopSongs";
 
@@ -17,8 +16,13 @@ export default function Index() {
     <div className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-12 text-green-400">My Music Stats</h1>
-        <div className="mb-8">
-          <CurrentMusicComponent />
+        <div className="flex flex-col lg:flex-row gap-8 mb-8">
+          <div className="lg:w-2/3">
+            <CurrentMusicComponent />
+          </div>
+          <div className="lg:w-1/3">
+            <MoodComponent />
+          </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-8 mb-12">
           <div className="lg:w-2/3">
