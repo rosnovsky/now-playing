@@ -52,9 +52,15 @@ export default function Index() {
         <h1 className="text-4xl font-bold text-center mb-4 text-green-400">
           My Music Stats
         </h1>
-        <p className="text-sm  text-center mb-12 text-gray-300">
+        <p className="text-sm  text-center mb-1 text-gray-300">
           What I&apos;ve been listening to lately
         </p>
+        <div className="text-sm  text-center mb-12 text-gray-300"><a
+          href="/top/songs"
+          className="text-gray-400 hover:text-green-400 transition-colors"
+        >
+          Top Charts
+        </a></div>
         <div className="flex flex-col lg:flex-row gap-8 mb-8">
           <div className="lg:w-2/3">
             <CurrentMusicComponent />
