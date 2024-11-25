@@ -77,6 +77,7 @@ export async function loader({ request }: { request: Request }) {
 
     if (!parsedResult.success) {
       console.error("Validation error:", parsedResult.error);
+      console.error("Validation data:", parsedResult.data);
       return json({ error: "Invalid data structure" }, { status: 500 });
     }
 
