@@ -1,33 +1,27 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
 import { Album, albumsSchema } from "~/types";
+import { fetcher } from "~/utils/fetcher";
 
 export async function loader({ request }: { request: Request }) {
-  const response = await fetch(
+  const response = await fetcher(
     `${
       import.meta.env.VITE_PLEX_SERVER_URL
-    }/library/sections/3/all?X-Plex-Token=${
+    }/library/sections/3/search?type=9&X-Plex-Token=${
       import.meta.env.VITE_PLEX_TOKEN
-    }&sort=viewCount%3Adesc&limit=10`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    }
+    }&sort=viewCount%3Adesc&limit=5`
   );
+  const data = response.data;
+
+  console.log({ metadataAtZero: data.MediaContainer.Metadata[0] });
+
   console.log(
     `${
       import.meta.env.VITE_PLEX_SERVER_URL
-    }/library/sections/3/all?X-Plex-Token=${
+    }/library/sections/3/search?type=9&X-Plex-Token=${
       import.meta.env.VITE_PLEX_TOKEN
-    }&type=9&sort=viewCount%3Adesc&limit=10`
+    }&sort=viewCount%3Adesc&limit=5`
   );
-  const data = (await response.json()) as {
-    MediaContainer: {
-      data: Album[];
-    };
-  };
 
   const albums = data.MediaContainer.Metadata.map((item: Album) => {
     const rewriteImageUrl = (url: string | undefined) => {
@@ -56,7 +50,7 @@ export async function loader({ request }: { request: Request }) {
     };
   });
 
-  const validatedAlbums = albumsSchema.parse(albums);
+  const validatedAlbums = albumsSchema.safeParse(albums);
 
   const etag = createHash("md5")
     .update(JSON.stringify(validatedAlbums))
@@ -68,10 +62,5 @@ export async function loader({ request }: { request: Request }) {
     return new Response(null, { status: 304 });
   }
 
-  return json(validatedAlbums, {
-    headers: {
-      ETag: etag,
-      "Cache-Control": "no-cache",
-    },
-  });
+  return json(validatedAlbums);
 }

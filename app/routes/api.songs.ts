@@ -1,28 +1,36 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
 import { Song, songsSchema } from "~/types";
+import { fetcher } from "~/utils/fetcher";
 
 export async function loader({ request }: { request: Request }) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const response = await fetch(`${process.env.VITE_PLEX_SERVER_URL}/library/sections/2/all?X-Plex-Token=${process.env.VITE_PLEX_TOKEN}&type=10&${searchParams.toString()}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-    });
+    const response = await fetcher(
+      `${
+        process.env.VITE_PLEX_SERVER_URL
+      }/library/sections/3/search?X-Plex-Token=${
+        process.env.VITE_PLEX_TOKEN
+      }&type=10&sort=lastViewedAt:desc${searchParams.toString()}&limit=10`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
 
-    if (!response.ok) {
+    if (!response.data) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = response.data;
 
     const songs: Song[] = data.MediaContainer.Metadata.map((item: Song) => {
       const rewriteImageUrl = (url: string | undefined) => {
         if (!url) return undefined;
-        const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+        const cleanPath = url.startsWith("/") ? url.slice(1) : url;
         return `/api/images/${cleanPath}`;
       };
 
@@ -44,15 +52,18 @@ export async function loader({ request }: { request: Request }) {
         addedAt: item.addedAt,
         updatedAt: item.updatedAt,
         userRating: item.userRating,
-        Media: item.Media ? [{
-          audioCodec: item.Media[0].audioCodec,
-          bitrate: item.Media[0].bitrate
-        }] : undefined
+        Media: item.Media
+          ? [
+              {
+                audioCodec: item.Media[0].audioCodec,
+                bitrate: item.Media[0].bitrate,
+              },
+            ]
+          : undefined,
       };
     });
 
     const parsedResult = songsSchema.safeParse(songs);
-
 
     if (!parsedResult.success) {
       console.error("Validation error:", parsedResult.error);
@@ -61,9 +72,11 @@ export async function loader({ request }: { request: Request }) {
 
     const validatedSongs = parsedResult.data;
 
-    const etag = createHash('md5').update(JSON.stringify(validatedSongs)).digest('hex');
+    const etag = createHash("md5")
+      .update(JSON.stringify(validatedSongs))
+      .digest("hex");
 
-    const clientEtag = request.headers.get('If-None-Match');
+    const clientEtag = request.headers.get("If-None-Match");
 
     if (clientEtag === etag) {
       return new Response(null, { status: 304 });
@@ -71,11 +84,10 @@ export async function loader({ request }: { request: Request }) {
 
     return json(validatedSongs, {
       headers: {
-        'ETag': etag,
-        'Cache-Control': 'no-cache'
-      }
+        ETag: etag,
+        "Cache-Control": "no-cache",
+      },
     });
-
   } catch (error) {
     console.error("Error fetching songs:", error);
     return json({ error: "Failed to fetch songs" }, { status: 500 });

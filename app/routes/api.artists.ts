@@ -8,7 +8,7 @@ export async function loader({ request }: { request: Request }) {
       import.meta.env.VITE_PLEX_SERVER_URL
     }/library/sections/3/all?X-Plex-Token=${
       import.meta.env.VITE_PLEX_TOKEN
-    }&type=1&sort=viewCount%3Adesc&limit=10`,
+    }&sort=viewCount%3Adesc&limit=10`,
     {
       headers: {
         "Content-Type": "application/json",

@@ -84,7 +84,7 @@ describe("api.songs loader", () => {
     const response = await loader({ request });
 
     expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("http://localhost:32400/library/sections/2/all"),
+      expect.stringContaining("http://localhost:32400/library/sections/3/all"),
       expect.objectContaining({
         headers: {
           "Content-Type": "application/json",
