@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
 import { Artist, artistsSchema } from "~/types";
+import { upsertPlexData } from "~/utils/drizzle.server";
 
 export async function loader({ request }: { request: Request }) {
   const response = await fetch(
@@ -21,8 +22,8 @@ export async function loader({ request }: { request: Request }) {
   };
 
   const artists = data.MediaContainer.Metadata.map((item: Artist) => {
-    const rewriteImageUrl = (url: string | undefined) => {
-      if (!url) return null;
+    const rewriteImageUrl = (url: string | null | undefined) => {
+      if (!url) return undefined;
       const cleanPath = url.startsWith("/") ? url.slice(1) : url;
       return `/api/images/${cleanPath}`;
     };
@@ -34,13 +35,16 @@ export async function loader({ request }: { request: Request }) {
       title: item.title,
       summary: item.summary,
       viewCount: item.viewCount || 0,
-      thumb: rewriteImageUrl(item.thumb) ?? null,
+      thumb: rewriteImageUrl(item.thumb),
+      art: rewriteImageUrl(item.art) ?? null,
       addedAt: item.addedAt,
       updatedAt: item.updatedAt,
     };
   });
 
   const validatedArtists = artistsSchema.parse(artists);
+
+  await upsertPlexData("artists", validatedArtists);
 
   const etag = createHash("md5")
     .update(JSON.stringify(validatedArtists))

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const thumbSchema = z.string();
+const optionalThumbSchema = z.string().optional();
 
 const mediaSchema = z
   .object({
@@ -48,7 +49,7 @@ export const songSchema = z.object({
   title: z.string(),
   grandparentTitle: z.string(),
   parentTitle: z.string(),
-  albumArt: thumbSchema,
+  albumArt: optionalThumbSchema,
   duration: z.number(),
   ratingKey: z.string(),
   key: z.string(),
@@ -56,9 +57,9 @@ export const songSchema = z.object({
   grandparentRatingKey: z.string(),
   viewCount: z.number(),
   lastViewedAt: z.number().optional(),
-  thumb: thumbSchema,
+  thumb: optionalThumbSchema,
   art: thumbSchema.nullable().optional(),
-  parentThumb: thumbSchema,
+  parentThumb: optionalThumbSchema,
   grandparentThumb: thumbSchema.nullable().optional(),
   addedAt: z.number(),
   updatedAt: z.number().optional(),
@@ -75,9 +76,9 @@ const artistSchema = z.object({
   guid: z.string(),
   type: z.literal("artist"),
   title: z.string(),
-  summary: z.string(),
+  summary: z.string().optional(),
   viewCount: z.number(),
-  thumb: z.string(),
+  thumb: z.string().optional(),
   art: z.string().nullable().optional(),
   addedAt: z.number(),
   updatedAt: z.number().optional(),

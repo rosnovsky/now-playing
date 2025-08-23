@@ -1,18 +1,22 @@
 import { json } from "@remix-run/node";
 import { createHash } from "crypto";
 import { Song, songsSchema } from "~/types";
+import { upsertPlexData } from "~/utils/drizzle.server";
 import { fetcher } from "~/utils/fetcher";
 
 export async function loader({ request }: { request: Request }) {
   try {
     const { searchParams } = new URL(request.url);
+    const searchParamsString = searchParams.toString();
+
+    const songsUrl = `${
+      process.env.VITE_PLEX_SERVER_URL
+    }/library/sections/3/search?X-Plex-Token=${
+      process.env.VITE_PLEX_TOKEN
+    }&type=10&sort=lastViewedAt:desc${searchParamsString ? '&' + searchParamsString : ''}&limit=50`
 
     const response = await fetcher(
-      `${
-        process.env.VITE_PLEX_SERVER_URL
-      }/library/sections/3/search?X-Plex-Token=${
-        process.env.VITE_PLEX_TOKEN
-      }&type=10&sort=lastViewedAt:desc${searchParams.toString()}&limit=10`,
+      songsUrl,
       {
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +32,7 @@ export async function loader({ request }: { request: Request }) {
     const data = response.data;
 
     const songs: Song[] = data.MediaContainer.Metadata.map((item: Song) => {
-      const rewriteImageUrl = (url: string | undefined) => {
+      const rewriteImageUrl = (url: string | null | undefined) => {
         if (!url) return undefined;
         const cleanPath = url.startsWith("/") ? url.slice(1) : url;
         return `/api/images/${cleanPath}`;
@@ -38,7 +42,7 @@ export async function loader({ request }: { request: Request }) {
         title: item.title,
         grandparentTitle: item.grandparentTitle,
         parentTitle: item.parentTitle,
-        albumArt: rewriteImageUrl(item.thumb),
+        albumArt: rewriteImageUrl(item.albumArt),
         duration: item.duration,
         ratingKey: item.ratingKey,
         key: item.key,
@@ -47,8 +51,9 @@ export async function loader({ request }: { request: Request }) {
         viewCount: item.viewCount || 0,
         lastViewedAt: item.lastViewedAt,
         thumb: rewriteImageUrl(item.thumb),
-        art: rewriteImageUrl(item.albumArt),
+        art: rewriteImageUrl(item.art),
         parentThumb: rewriteImageUrl(item.parentThumb),
+        grandparentThumb: rewriteImageUrl(item.grandparentThumb),
         addedAt: item.addedAt,
         updatedAt: item.updatedAt,
         userRating: item.userRating,
@@ -71,6 +76,8 @@ export async function loader({ request }: { request: Request }) {
     }
 
     const validatedSongs = parsedResult.data;
+
+    await upsertPlexData("songs", validatedSongs);
 
     const etag = createHash("md5")
       .update(JSON.stringify(validatedSongs))

@@ -38,6 +38,7 @@ describe("api.songs loader", () => {
           viewCount: 5,
           lastViewedAt: 1640995200,
           parentThumb: "/library/metadata/67890/thumb/1234567890",
+          grandparentThumb: "/library/metadata/54321/thumb/3456789012",
           addedAt: 1640908800,
           updatedAt: 1640995200,
           userRating: 8,
@@ -84,7 +85,7 @@ describe("api.songs loader", () => {
     const response = await loader({ request });
 
     expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("http://localhost:32400/library/sections/3/all"),
+      expect.stringContaining("http://localhost:32400/library/sections/3/search"),
       expect.objectContaining({
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +106,6 @@ describe("api.songs loader", () => {
       title: "Test Song",
       grandparentTitle: "Test Artist",
       parentTitle: "Test Album",
-      albumArt: "/api/images/library/metadata/12345/thumb/1234567890",
       duration: 240000,
       ratingKey: "12345",
       key: "/library/metadata/12345",
@@ -114,8 +114,8 @@ describe("api.songs loader", () => {
       viewCount: 5,
       lastViewedAt: 1640995200,
       thumb: "/api/images/library/metadata/12345/thumb/1234567890",
-      art: undefined,
       parentThumb: "/api/images/library/metadata/67890/thumb/1234567890",
+      grandparentThumb: "/api/images/library/metadata/54321/thumb/3456789012",
       addedAt: 1640908800,
       updatedAt: 1640995200,
       userRating: 8,
@@ -307,6 +307,7 @@ describe("api.songs loader", () => {
             parentThumb: "/library/metadata/67890/thumb/1234567890", // With leading slash
             addedAt: 1640908800,
             albumArt: undefined, // Test undefined albumArt
+            art: "/library/metadata/12345/art/1234567890", // Test art field
             Media: [
               {
                 audioCodec: "flac",
@@ -336,11 +337,9 @@ describe("api.songs loader", () => {
     expect(song.parentThumb).toBe(
       "/api/images/library/metadata/67890/thumb/1234567890"
     );
-    // albumArt is rewritten from thumb, so it will be the same as thumb
-    expect(song.albumArt).toBe(
-      "/api/images/library/metadata/12345/thumb/1234567890"
-    );
-    expect(song.art).toBeUndefined();
+    // albumArt should be undefined since it was explicitly set to undefined in mock
+    expect(song.albumArt).toBeUndefined();
+    expect(song.art).toBe("/api/images/library/metadata/12345/art/1234567890");
   });
 
   it("should validate the response against the songs schema", async () => {
@@ -357,5 +356,94 @@ describe("api.songs loader", () => {
     // Verify the response matches our schema
     const validationResult = songsSchema.safeParse(responseData);
     expect(validationResult.success).toBe(true);
+  });
+
+  it("should handle grandparentThumb field correctly", async () => {
+    const responseWithGrandparentThumb = {
+      MediaContainer: {
+        Metadata: [
+          {
+            title: "Test Song",
+            grandparentTitle: "Test Artist",
+            parentTitle: "Test Album",
+            thumb: "/library/metadata/12345/thumb/1234567890",
+            duration: 240000,
+            ratingKey: "12345",
+            key: "/library/metadata/12345",
+            parentRatingKey: "67890",
+            grandparentRatingKey: "54321",
+            viewCount: 5,
+            parentThumb: "/library/metadata/67890/thumb/1234567890",
+            grandparentThumb: "/library/metadata/54321/thumb/3456789012",
+            addedAt: 1640908800,
+            Media: [
+              {
+                audioCodec: "flac",
+                bitrate: 1411,
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: vi.fn().mockResolvedValue(responseWithGrandparentThumb),
+    });
+
+    const request = new Request("http://localhost:3000/api/songs");
+    const response = await loader({ request });
+
+    const responseData = await response.json();
+    const song = responseData[0];
+
+    expect(song.grandparentThumb).toBe(
+      "/api/images/library/metadata/54321/thumb/3456789012"
+    );
+  });
+
+  it("should handle missing grandparentThumb gracefully", async () => {
+    const responseWithoutGrandparentThumb = {
+      MediaContainer: {
+        Metadata: [
+          {
+            title: "Test Song",
+            grandparentTitle: "Test Artist",
+            parentTitle: "Test Album",
+            thumb: "/library/metadata/12345/thumb/1234567890",
+            duration: 240000,
+            ratingKey: "12345",
+            key: "/library/metadata/12345",
+            parentRatingKey: "67890",
+            grandparentRatingKey: "54321",
+            viewCount: 5,
+            parentThumb: "/library/metadata/67890/thumb/1234567890",
+            addedAt: 1640908800,
+            Media: [
+              {
+                audioCodec: "flac",
+                bitrate: 1411,
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: vi.fn().mockResolvedValue(responseWithoutGrandparentThumb),
+    });
+
+    const request = new Request("http://localhost:3000/api/songs");
+    const response = await loader({ request });
+
+    const responseData = await response.json();
+    const song = responseData[0];
+
+    expect(song.grandparentThumb).toBeUndefined();
   });
 });
