@@ -10,7 +10,7 @@ describe("api.songs browser integration", () => {
       Object.defineProperty(globalThis, "window", {
         value: {
           location: {
-            origin: "http://localhost:3000",
+            origin: "http://localhost:5173",
           },
           localStorage: {
             getItem: vi.fn(),

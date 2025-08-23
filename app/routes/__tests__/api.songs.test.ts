@@ -10,6 +10,18 @@ vi.mock("crypto", () => ({
   })),
 }));
 
+// Mock the fetcher utility
+vi.mock("~/utils/fetcher", () => ({
+  fetcher: vi.fn(),
+}));
+
+// Mock the drizzle function
+vi.mock("~/utils/drizzle.server", () => ({
+  upsertPlexData: vi.fn(),
+}));
+
+import { fetcher } from "~/utils/fetcher";
+
 describe("api.songs loader", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -74,17 +86,16 @@ describe("api.songs loader", () => {
   };
 
   it("should successfully fetch and transform songs", async () => {
-    // Mock successful fetch response
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    // Mock successful fetcher response
+    vi.mocked(fetcher).mockResolvedValue({
+      data: mockPlexResponse,
       status: 200,
-      json: vi.fn().mockResolvedValue(mockPlexResponse),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
     const response = await loader({ request });
 
-    expect(fetch).toHaveBeenCalledWith(
+    expect(fetcher).toHaveBeenCalledWith(
       expect.stringContaining("http://localhost:32400/library/sections/3/search"),
       expect.objectContaining({
         headers: {
@@ -136,10 +147,9 @@ describe("api.songs loader", () => {
   });
 
   it("should include search parameters in the request URL", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: mockPlexResponse,
       status: 200,
-      json: vi.fn().mockResolvedValue(mockPlexResponse),
     });
 
     const request = new Request(
@@ -147,17 +157,16 @@ describe("api.songs loader", () => {
     );
     await loader({ request });
 
-    expect(fetch).toHaveBeenCalledWith(
+    expect(fetcher).toHaveBeenCalledWith(
       expect.stringContaining("sort=title&limit=10"),
       expect.any(Object)
     );
   });
 
   it("should handle 304 Not Modified when ETags match", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: mockPlexResponse,
       status: 200,
-      json: vi.fn().mockResolvedValue(mockPlexResponse),
     });
 
     const request = new Request("http://localhost:3000/api/songs", {
@@ -171,10 +180,9 @@ describe("api.songs loader", () => {
   });
 
   it("should return ETag and Cache-Control headers on successful response", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: mockPlexResponse,
       status: 200,
-      json: vi.fn().mockResolvedValue(mockPlexResponse),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -185,8 +193,8 @@ describe("api.songs loader", () => {
   });
 
   it("should handle HTTP errors from Plex server", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: false,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: null,
       status: 404,
     });
 
@@ -199,7 +207,7 @@ describe("api.songs loader", () => {
   });
 
   it("should handle network errors", async () => {
-    global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
+    vi.mocked(fetcher).mockRejectedValue(new Error("Network error"));
 
     const request = new Request("http://localhost:3000/api/songs");
     const response = await loader({ request });
@@ -210,10 +218,9 @@ describe("api.songs loader", () => {
   });
 
   it("should handle invalid JSON response", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: null,
       status: 200,
-      json: vi.fn().mockRejectedValue(new Error("Invalid JSON")),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -238,10 +245,9 @@ describe("api.songs loader", () => {
       },
     };
 
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: invalidResponse,
       status: 200,
-      json: vi.fn().mockResolvedValue(invalidResponse),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -275,10 +281,9 @@ describe("api.songs loader", () => {
       },
     };
 
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: responseWithoutMedia,
       status: 200,
-      json: vi.fn().mockResolvedValue(responseWithoutMedia),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -319,10 +324,9 @@ describe("api.songs loader", () => {
       },
     };
 
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: responseWithDifferentUrls,
       status: 200,
-      json: vi.fn().mockResolvedValue(responseWithDifferentUrls),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -343,10 +347,9 @@ describe("api.songs loader", () => {
   });
 
   it("should validate the response against the songs schema", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: mockPlexResponse,
       status: 200,
-      json: vi.fn().mockResolvedValue(mockPlexResponse),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -387,10 +390,9 @@ describe("api.songs loader", () => {
       },
     };
 
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: responseWithGrandparentThumb,
       status: 200,
-      json: vi.fn().mockResolvedValue(responseWithGrandparentThumb),
     });
 
     const request = new Request("http://localhost:3000/api/songs");
@@ -432,10 +434,9 @@ describe("api.songs loader", () => {
       },
     };
 
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
+    vi.mocked(fetcher).mockResolvedValue({
+      data: responseWithoutGrandparentThumb,
       status: 200,
-      json: vi.fn().mockResolvedValue(responseWithoutGrandparentThumb),
     });
 
     const request = new Request("http://localhost:3000/api/songs");

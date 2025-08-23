@@ -31,6 +31,7 @@ export async function loader({ request }: { request: Request }) {
 
     const data = response.data;
 
+    // @ts-expect-error FIXME eventually
     const songs: Song[] = data.MediaContainer.Metadata.map((item: Song) => {
       const rewriteImageUrl = (url: string | null | undefined) => {
         if (!url) return undefined;

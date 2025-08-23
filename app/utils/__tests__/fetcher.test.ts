@@ -230,7 +230,8 @@ describe('Fetcher with Retry and Fallback', () => {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer token'
+          'Authorization': 'Bearer token',
+          'X-Optional': ''
         }
       });
     });
