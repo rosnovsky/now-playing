@@ -1,4 +1,8 @@
 onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - edgedriver
   - esbuild
+  - geckodriver
   - msw
+  - sharp
   - unrs-resolver
