@@ -4,6 +4,8 @@
 // Token: import.meta.env.VITE_PLEX_TOKEN
 // Library structure docs: https://support.plex.tv/articles/201638786-plex-media-server-url-commands/
 
+import { fetcher } from "./fetcher";
+
 // The function should take no arguments, and return a Promise that resolves to an object containing the discovered data.
 // Discovered data should be an object like { sections: [{id: number, title: string, type: string, path: string }]}
 
@@ -36,7 +38,7 @@ async function discoverPlexData(): Promise<PlexDiscoveryResult> {
 
   try {
     // Fetch library sections from Plex server
-    const response = await fetch(
+    const response = await fetcher(
       `${baseUrl}/library/sections?X-Plex-Token=${token}`,
       {
         headers: {
@@ -45,13 +47,13 @@ async function discoverPlexData(): Promise<PlexDiscoveryResult> {
       }
     );
 
-    if (!response.ok) {
+    if (!response.data) {
       throw new Error(
-        `Failed to fetch Plex library sections: ${response.status} ${response.statusText}`
+        `Failed to fetch Plex library sections: ${response.status}`
       );
     }
 
-    const data = await response.json();
+    const data = response.data;
 
     // Extract sections from the response
     const sectionsData =
@@ -67,7 +69,7 @@ async function discoverPlexData(): Promise<PlexDiscoveryResult> {
 
     for (const sectionData of sectionsData) {
       try {
-        const sectionResponse = await fetch(
+        const sectionResponse = await fetcher(
           `${baseUrl}/library/sections/${sectionData.path}/all?X-Plex-Token=${token}`,
           {
             headers: {
@@ -78,8 +80,8 @@ async function discoverPlexData(): Promise<PlexDiscoveryResult> {
 
         let items: PlexItem[] = [];
 
-        if (sectionResponse.ok) {
-          const sectionContent = await sectionResponse.json();
+        if (sectionResponse.data) {
+          const sectionContent = sectionResponse.data;
 
           // Extract items from the section
           items =

@@ -47,12 +47,12 @@ export const LastPlayedSongs: React.FC = () => {
           {[...Array(3)].map((_, columnIndex) => (
             <div key={columnIndex} className={`lg:w-1/${columns} flex flex-col`}>
               {[...Array(itemsPerColumn)].map((_, itemIndex) => (
-                <div key={itemIndex} className="bg-gray-800 rounded-lg overflow-hidden shadow-sm m-2 py-12 px-2 flex items-center h-28">
+                <div key={itemIndex} className="bg-gray-800 rounded-lg overflow-hidden shadow-xs m-2 py-12 px-2 flex items-center h-28">
                   <div className="w-16 h-16 bg-gray-700 rounded-md mr-3"></div>
-                  <div className="flex-grow overflow-hidden my-5">
-                    <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-gray-600 rounded w-1/2 mb-2"></div>
-                    <div className="h-3 bg-gray-600 rounded w-2/3 mb-2"></div>
+                  <div className="grow overflow-hidden my-5">
+                    <div className="h-4 bg-gray-700 rounded-sm w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-600 rounded-sm w-1/2 mb-2"></div>
+                    <div className="h-3 bg-gray-600 rounded-sm w-2/3 mb-2"></div>
                     <div className="flex">
                       {[...Array(5)].map((_, starIndex) => (
                         <div key={starIndex} className="w-4 h-4 bg-gray-600 rounded-full mr-1"></div>
@@ -60,8 +60,8 @@ export const LastPlayedSongs: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right ml-2 flex flex-col items-end">
-                    <div className="h-3 bg-gray-600 rounded w-20 mb-2"></div>
-                    <div className="h-5 bg-gray-700 rounded w-16"></div>
+                    <div className="h-3 bg-gray-600 rounded-sm w-20 mb-2"></div>
+                    <div className="h-5 bg-gray-700 rounded-sm w-16"></div>
                   </div>
                 </div>
               ))}
@@ -102,9 +102,9 @@ export const LastPlayedSongs: React.FC = () => {
         {distributeItems().map((columnItems, columnIndex) => (
           <div key={columnIndex} className={`lg:w-1/${columns} flex flex-col`}>
             {columnItems.map((song) => (
-              <div key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-sm m-2 py-8 px-2 flex items-center h-24">
+              <div key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-xs m-2 py-8 px-2 flex items-center h-24">
                 <img src={song.thumb} alt={`${song.title} cover`} className="w-16 h-16 object-cover rounded-md mr-3" />
-                <div className="flex-grow overflow-hidden my-5">
+                <div className="grow overflow-hidden my-5">
                   <h3 className="text-md font-semibold text-white truncate">{song.title}</h3>
                   <p className="text-xs text-gray-400 truncate">{song.grandparentTitle}</p>
                   <p className="text-xs text-gray-500 truncate">{song.parentTitle}</p>

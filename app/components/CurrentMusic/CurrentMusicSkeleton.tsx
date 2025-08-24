@@ -1,20 +1,34 @@
-import { Pause } from "lucide-react"
+import { Clock } from "lucide-react"
+import { Card } from "~/components/ui/card"
 
 export const CurrentMusicSkeleton = () => {
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-lg animate-pulse">
-      <h2 className="h-6 flex items-center mb-3">
-        <Pause className="w-5 h-5 mr-2" />
-        <div className="h-7 bg-gray-600 rounded w-36"></div>
-      </h2>
-      <div className="flex items-center mt-3">
-        <div className="w-16 h-16 bg-gray-700 rounded-md mr-4"></div>
-        <div className="flex-grow">
-          <div className="h-6 bg-gray-600 rounded w-3/4 mb-2"></div>
-          <div className="h-4 bg-gray-700 rounded w-1/2 mb-2"></div>
-          <div className="h-3 bg-gray-700 rounded w-2/3"></div>
+    <Card className="bg-gradient-to-r from-music-card-bg to-music-card-hover border-primary/20 p-6 animate-pulse">
+      <div className="flex items-center gap-6">
+        {/* Album Art Skeleton */}
+        <div className="relative">
+          <div className="w-20 h-20 bg-muted/30 rounded-lg shadow-lg ring-2 ring-primary/30"></div>
+        </div>
+
+        {/* Track Info Skeleton */}
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary/20 rounded-full px-2 py-1 flex items-center gap-1">
+              <div className="h-3 bg-primary/40 rounded w-16"></div>
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3 text-muted-foreground" />
+              <div className="h-3 bg-muted/40 rounded w-12"></div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="h-6 bg-muted/50 rounded w-3/4"></div>
+            <div className="h-4 bg-muted/40 rounded w-1/2"></div>
+            <div className="h-3 bg-muted/30 rounded w-2/3"></div>
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

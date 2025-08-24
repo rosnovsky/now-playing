@@ -66,6 +66,14 @@ export const playEvents = pgTable('play_events', {
   playedAt: timestamp('played_at').notNull().defaultNow(),
 });
 
+export const syncEvents = pgTable('sync_events', {
+  id: serial('id').primaryKey(),
+  syncedAt: timestamp('synced_at').notNull().defaultNow(),
+  syncType: text('sync_type').notNull(), // 'full' or 'incremental'
+  itemsProcessed: integer('items_processed').notNull().default(0),
+  notes: text('notes'), // Optional notes about the sync
+});
+
 export const songsRelations = relations(songs, ({ many }) => ({
   playEvents: many(playEvents),
 }));

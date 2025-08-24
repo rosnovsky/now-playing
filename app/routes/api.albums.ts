@@ -12,8 +12,6 @@ export async function loader({ request }: { request: Request }) {
     import.meta.env.VITE_PLEX_TOKEN
   }&sort=viewCount%3Adesc&limit=10`
 
-  console.debug({ albumsUrl })
-
   try {
     const response = await fetcher(albumsUrl);
     // @ts-expect-error FIXME eventually

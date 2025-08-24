@@ -11,7 +11,7 @@ export const CurrentMusicNotPlaying = () => {
         <div className="w-16 h-16 bg-gray-700 rounded-md mr-4 flex items-center justify-center">
           <Music className="w-8 h-8 text-gray-400" />
         </div>
-        <div className="flex-grow">
+        <div className="grow">
           <p className="text-white mb-2">[Nothing is playing]</p>
           <p className="text-gray-400 text-sm"></p>
         </div>

@@ -203,7 +203,10 @@ describe('api.artists loader', () => {
 
     const request = new Request('http://localhost:3000/api/artists');
 
-    await expect(loader({ request })).rejects.toThrow();
+    const response = await loader({ request });
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe('Failed to fetch artists');
   });
 
   it('should handle network errors', async () => {
@@ -211,7 +214,10 @@ describe('api.artists loader', () => {
 
     const request = new Request('http://localhost:3000/api/artists');
 
-    await expect(loader({ request })).rejects.toThrow('Network error');
+    const response = await loader({ request });
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe('Failed to fetch artists');
   });
 
   it('should handle invalid JSON response', async () => {
@@ -222,7 +228,10 @@ describe('api.artists loader', () => {
 
     const request = new Request('http://localhost:3000/api/artists');
 
-    await expect(loader({ request })).rejects.toThrow('Invalid JSON');
+    const response = await loader({ request });
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe('Failed to fetch artists');
   });
 
   it('should handle validation errors from Zod schema', async () => {
@@ -251,7 +260,10 @@ describe('api.artists loader', () => {
 
     const request = new Request('http://localhost:3000/api/artists');
 
-    await expect(loader({ request })).rejects.toThrow();
+    const response = await loader({ request });
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe('Failed to fetch artists');
   });
 
   it('should handle artists without optional fields', async () => {

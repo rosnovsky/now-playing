@@ -109,3 +109,34 @@ const albumSchema = z.object({
 
 export const albumsSchema = z.array(albumSchema);
 export type Album = z.infer<typeof albumSchema>;
+
+const syncEventSchema = z.object({
+  id: z.number(),
+  syncedAt: z.date(),
+  syncType: z.enum(['full', 'incremental', 'failed']),
+  itemsProcessed: z.number(),
+  notes: z.string().nullable().optional(),
+});
+
+export type SyncEvent = z.infer<typeof syncEventSchema>;
+
+const plexHistoryItemSchema = z.object({
+  ratingKey: z.string(),
+  key: z.string(),
+  parentRatingKey: z.string(),
+  grandparentRatingKey: z.string(),
+  type: z.literal('track'),
+  title: z.string(),
+  parentTitle: z.string(),
+  grandparentTitle: z.string(),
+  viewedAt: z.number(),
+  librarySectionID: z.string(),
+  duration: z.number().optional(),
+  thumb: z.string().optional(),
+  art: z.string().nullable().optional(),
+  parentThumb: z.string().optional(),
+  grandparentThumb: z.string().nullable().optional(),
+});
+
+export type PlexHistoryItem = z.infer<typeof plexHistoryItemSchema>;
+export const plexHistorySchema = z.array(plexHistoryItemSchema);

@@ -19,15 +19,15 @@ export const TopArtists: React.FC = () => {
           {[...Array(5)].map((_, index) => (
             <li key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4">
               <div className="flex items-center">
-                <div className="flex-shrink-0 mr-4">
+                <div className="shrink-0 mr-4">
                   <div className="w-16 h-16 bg-gray-700 rounded-full"></div>
                 </div>
-                <div className="flex-grow">
-                  <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-600 rounded w-1/4"></div>
+                <div className="grow">
+                  <div className="h-6 bg-gray-700 rounded-sm w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-600 rounded-sm w-1/4"></div>
                 </div>
                 <div className="text-right">
-                  <div className="h-5 bg-green-400 rounded w-24"></div>
+                  <div className="h-5 bg-green-400 rounded-sm w-24"></div>
                 </div>
               </div>
             </li>
@@ -48,10 +48,10 @@ export const TopArtists: React.FC = () => {
         {artists?.slice(0, 5).map((artist, index) => (
           <li key={artist.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4">
             <div className="flex items-center">
-              <div className="flex-shrink-0 mr-4">
+              <div className="shrink-0 mr-4">
                 <img src={artist.thumb} alt={`${artist.title} thumbnail`} className="w-16 h-16 object-cover rounded-full" />
               </div>
-              <div className="flex-grow">
+              <div className="grow">
                 <h3 className="text-xl font-semibold text-white">{artist.title}</h3>
                 <p className="text-gray-400 text-sm">#{index + 1}</p>
               </div>

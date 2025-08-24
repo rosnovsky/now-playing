@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { CurrentMusic } from "~/types";
 import { useStore } from "./store";
-import "./tailwind.css";
+import "./global.css";
 import { convertJpgToFavicon } from "./utils/favicon";
 
 export const loader = async () => {
@@ -47,7 +47,7 @@ export default function App() {
   }, [currentSong]);
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

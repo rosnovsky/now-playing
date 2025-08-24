@@ -1,7 +1,6 @@
-import { CurrentMusicComponent } from "./CurrentMusic";
+import { UniversalTrackCard } from "../Song";
 import { CurrentMusicError } from "./CurrentMusicError";
 import { CurrentMusicNotPlaying } from "./CurrentMusicNotPlaying";
 import { CurrentMusicSkeleton } from "./CurrentMusicSkeleton";
 
-export { CurrentMusicComponent, CurrentMusicError, CurrentMusicNotPlaying, CurrentMusicSkeleton };
-
+export { UniversalTrackCard, CurrentMusicError, CurrentMusicNotPlaying, CurrentMusicSkeleton };

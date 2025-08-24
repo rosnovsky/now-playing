@@ -1,7 +1,8 @@
 import { json, type LoaderFunction, type MetaFunction } from "@remix-run/node";
-import { CurrentMusicComponent } from "~/components/CurrentMusic/";
+import { CurrentlyPlayingCard } from "~/components/CurrentMusic/CurrentMusic";
 import { LastPlayedSongs } from "~/components/LastPlayedSongs";
 import { MoodComponent } from "~/components/MoodComponent";
+import { UniversalTrackCard } from "~/components/Song";
 import { TopAlbums } from "~/components/TopAlbums";
 import { TopArtists } from "~/components/TopArtists";
 import { TopSongs } from "~/components/TopSongs";
@@ -47,38 +48,84 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function Index() {
   return (
-    <div className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-4 text-green-400">
-          My Music Stats
-        </h1>
-        <p className="text-sm  text-center mb-12 text-gray-300">
-          What I&apos;ve been listening to lately
-        </p>
-        <div className="flex flex-col lg:flex-row gap-8 mb-8">
-          <div className="lg:w-2/3">
-            <CurrentMusicComponent />
-          </div>
-          <div className="lg:w-1/3">
-            <MoodComponent />
-          </div>
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-sans font-black text-foreground tracking-tight">Plex Music Stats</h1>
+          <p className="text-muted-foreground font-mono text-sm uppercase tracking-wider">
+            Your personal music listening insights from Plex server
+          </p>
         </div>
-        <div className="flex flex-col lg:flex-row gap-8 mb-12">
-          <div className="lg:w-2/3">
-            <h2 className="text-2xl font-bold mb-4 text-green-400">
-              Top 10 Most Played Songs
-            </h2>
-            <TopSongs />
-          </div>
-          <div className="lg:w-1/3">
-            <TopArtists />
-            <TopAlbums />
-          </div>
-        </div>
-        <div>
-          <LastPlayedSongs />
-        </div>
+        <CurrentlyPlayingCard />
+        <div className="absolute right-0 top-0 bottom-4 w-32 bg-gradient-to-l from-background to-transparent pointer-events-none" />
       </div>
     </div>
   );
 }
+// <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+//           {/* Top 10 Most Played Songs */}
+//           <div className="space-y-4">
+//             <h2 className="text-2xl font-sans font-bold text-primary flex items-center gap-2">
+//               <span className="font-mono text-sm text-muted-foreground">#01</span>
+//               Top 10 Songs
+//             </h2>
+//             <div className="space-y-2">
+//               {mockTracks.map((track) => (
+//                 <UniversalTrackCard key={track.id} track={track} showRank showPlays isTopThree={track.rank <= 3} />
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Top 10 Albums */}
+//           <div className="space-y-4">
+//             <h2 className="text-2xl font-sans font-bold text-primary flex items-center gap-2">
+//               <span className="font-mono text-sm text-muted-foreground">#02</span>
+//               Top 10 Albums
+//             </h2>
+//             <div className="space-y-2">
+//               {mockAlbums.map((album) => (
+//                 <UniversalAlbumCard key={album.id} album={album} showRank showPlays isTopThree={album.rank <= 3} />
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Top 10 Artists */}
+//           <div className="space-y-4">
+//             <h2 className="text-2xl font-sans font-bold text-primary flex items-center gap-2">
+//               <span className="font-mono text-sm text-muted-foreground">#03</span>
+//               Top 10 Artists
+//             </h2>
+//             <div className="space-y-2">
+//               {mockArtists.map((artist) => (
+//                 <UniversalArtistCard key={artist.id} artist={artist} showRank showPlays isTopThree={artist.rank <= 3} />
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Last 50 Played Songs with fade effect */}
+//         <div className="space-y-4">
+//           <h2 className="text-2xl font-sans font-bold text-primary flex items-center gap-2">
+//             <span className="font-mono text-sm text-muted-foreground">#04</span>
+//             Recently Played
+//           </h2>
+//           <div className="relative">
+//             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+//               {mockRecentTracks.map((track, index) => {
+//                 const isFading = index >= mockRecentTracks.length - 10
+//                 const fadeOpacity = isFading ? Math.max(0.1, 1 - (index - (mockRecentTracks.length - 10)) / 10) : 1
+
+//                 return (
+//                   <UniversalTrackCard
+//                     key={track.id}
+//                     track={track}
+//                     variant="compact"
+//                     className="flex-shrink-0 w-80 transition-opacity duration-300"
+//                     style={{ opacity: fadeOpacity }}
+//                   />
+//                 )
+//               })}
+//             </div>
+//                   </div>
+//                 </div>
