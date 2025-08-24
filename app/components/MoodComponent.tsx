@@ -22,9 +22,9 @@ export const MoodComponent = () => {
           <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center mr-3">
             <Braces className="w-6 h-6 text-gray-600" />
           </div>
-          <div className="flex-grow">
-            <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-            <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+          <div className="grow">
+            <div className="h-4 bg-gray-700 rounded-sm w-3/4 mb-2"></div>
+            <div className="h-3 bg-gray-700 rounded-sm w-1/2"></div>
           </div>
         </div>
       </div>

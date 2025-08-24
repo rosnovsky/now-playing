@@ -1,34 +1,39 @@
 import { z } from "zod";
 
 const thumbSchema = z.string();
+const optionalThumbSchema = z.string().optional();
 
-const mediaSchema = z.object({
-  id: z.string(), // Changed from number to string
-  duration: z.number().int().positive(),
-  bitrate: z.number().int().positive(),
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
-  aspectRatio: z.number().positive(),
-  audioChannels: z.number().int().positive(),
-  audioCodec: z.string(),
-  videoCodec: z.string(),
-  videoResolution: z.string(),
-  container: z.string(),
-  videoFrameRate: z.string(),
-  audioProfile: z.string(),
-  videoProfile: z.string(),
-}).partial();
+const mediaSchema = z
+  .object({
+    id: z.string(), // Changed from number to string
+    duration: z.number().int().positive(),
+    bitrate: z.number().int().positive(),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    aspectRatio: z.number().positive(),
+    audioChannels: z.number().int().positive(),
+    audioCodec: z.string(),
+    videoCodec: z.string(),
+    videoResolution: z.string(),
+    container: z.string(),
+    videoFrameRate: z.string(),
+    audioProfile: z.string(),
+    videoProfile: z.string(),
+  })
+  .partial();
 
-const currentMusicSchema = z.object({
-  title: z.string(),
-  grandparentTitle: z.string(), // Artist
-  parentTitle: z.string(), // Album
-  albumArt: thumbSchema,
-  currentTime: z.number().int().nonnegative(),
-  duration: z.number().int().positive(),
-  isPlaying: z.boolean(),
-  Media: z.array(mediaSchema).optional(),
-}).partial();
+const currentMusicSchema = z
+  .object({
+    title: z.string(),
+    grandparentTitle: z.string(), // Artist
+    parentTitle: z.string(), // Album
+    albumArt: thumbSchema,
+    currentTime: z.number().int().nonnegative(),
+    duration: z.number().int().positive(),
+    isPlaying: z.boolean(),
+    Media: z.array(mediaSchema).optional(),
+  })
+  .partial();
 
 const currentMusicResponseSchema = z.object({
   currentMusic: currentMusicSchema.nullable(),
@@ -44,7 +49,7 @@ export const songSchema = z.object({
   title: z.string(),
   grandparentTitle: z.string(),
   parentTitle: z.string(),
-  albumArt: thumbSchema,
+  albumArt: optionalThumbSchema,
   duration: z.number(),
   ratingKey: z.string(),
   key: z.string(),
@@ -52,14 +57,14 @@ export const songSchema = z.object({
   grandparentRatingKey: z.string(),
   viewCount: z.number(),
   lastViewedAt: z.number().optional(),
-  thumb: thumbSchema,
+  thumb: optionalThumbSchema,
   art: thumbSchema.nullable().optional(),
-  parentThumb: thumbSchema,
+  parentThumb: optionalThumbSchema,
   grandparentThumb: thumbSchema.nullable().optional(),
   addedAt: z.number(),
   updatedAt: z.number().optional(),
   userRating: z.number().optional(),
-  Media: z.array(mediaSchema)
+  Media: z.array(mediaSchema).optional(),
 });
 
 export type Song = z.infer<typeof songSchema>;
@@ -69,11 +74,11 @@ export const songsSchema = z.array(songSchema);
 const artistSchema = z.object({
   ratingKey: z.string(),
   guid: z.string(),
-  type: z.literal('artist'),
+  type: z.literal("artist"),
   title: z.string(),
-  summary: z.string(),
+  summary: z.string().optional(),
   viewCount: z.number(),
-  thumb: z.string(),
+  thumb: z.string().optional(),
   art: z.string().nullable().optional(),
   addedAt: z.number(),
   updatedAt: z.number().optional(),
@@ -88,7 +93,7 @@ const albumSchema = z.object({
   parentRatingKey: z.string(),
   guid: z.string(),
   parentGuid: z.string(),
-  type: z.literal('album'),
+  type: z.literal("album"),
   title: z.string(),
   parentTitle: z.string(),
   summary: z.string(),
@@ -104,3 +109,34 @@ const albumSchema = z.object({
 
 export const albumsSchema = z.array(albumSchema);
 export type Album = z.infer<typeof albumSchema>;
+
+const syncEventSchema = z.object({
+  id: z.number(),
+  syncedAt: z.date(),
+  syncType: z.enum(['full', 'incremental', 'failed']),
+  itemsProcessed: z.number(),
+  notes: z.string().nullable().optional(),
+});
+
+export type SyncEvent = z.infer<typeof syncEventSchema>;
+
+const plexHistoryItemSchema = z.object({
+  ratingKey: z.string(),
+  key: z.string(),
+  parentRatingKey: z.string(),
+  grandparentRatingKey: z.string(),
+  type: z.literal('track'),
+  title: z.string(),
+  parentTitle: z.string(),
+  grandparentTitle: z.string(),
+  viewedAt: z.number(),
+  librarySectionID: z.string(),
+  duration: z.number().optional(),
+  thumb: z.string().optional(),
+  art: z.string().nullable().optional(),
+  parentThumb: z.string().optional(),
+  grandparentThumb: z.string().nullable().optional(),
+});
+
+export type PlexHistoryItem = z.infer<typeof plexHistoryItemSchema>;
+export const plexHistorySchema = z.array(plexHistoryItemSchema);
