@@ -1,6 +1,6 @@
 {
   "name": "current-music",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -80,7 +80,7 @@
     "webdriverio": "^8.46.0"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "packageManager": "pnpm@10.15.0"
 }
