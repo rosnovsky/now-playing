@@ -37,9 +37,9 @@ export function UniversalAlbumCard({
         className,
       )}
     >
-      {/* Rank Number with enhanced styling */}
+      {/* Rank Number - LEFT SIDE */}
       {showRank && rank && (
-        <div className="flex-shrink-0 w-8 text-right">
+        <div className="flex-shrink-0 w-8">
           <Badge
             variant="outline"
             className={cn(
@@ -61,7 +61,7 @@ export function UniversalAlbumCard({
         )}
       >
         <img
-          src={album.art || "/placeholder.svg"}
+          src={album.thumb || "/placeholder.svg"}
           alt={`${album.title} cover`}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
@@ -93,7 +93,7 @@ export function UniversalAlbumCard({
         )}
       </div>
 
-      {/* Enhanced Play Count */}
+      {/* Enhanced Play Count - RIGHT SIDE */}
       {showPlays && album.viewCount && (
         <div className="flex-shrink-0 text-right">
           <div className="flex items-center gap-1">

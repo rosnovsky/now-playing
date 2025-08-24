@@ -50,6 +50,20 @@ export function UniversalTrackCard({
       )}
       style={style}
     >
+      {/* Rank Number - LEFT SIDE */}
+      {showRank && rank && (
+        <div className="shrink-0 w-8">
+          <Badge
+            variant="outline"
+            className={cn(
+              "font-mono text-xs border-primary/30",
+              isTopThree ? "bg-amber-500/20 border-amber-500/50 text-amber-200" : "bg-muted/50",
+            )}
+          >
+            #{rank.toString().padStart(2, "0")}
+          </Badge>
+        </div>
+      )}
       {/* Album Art with enhanced styling */}
       <div
         className={cn(
@@ -92,7 +106,7 @@ export function UniversalTrackCard({
         {!isCompact && <p className="text-xs text-muted-foreground/70 truncate font-mono">{track.parentTitle}</p>}
       </div>
 
-      {/* Enhanced Play Count */}
+      {/* Enhanced Play Count - RIGHT SIDE */}
       {showPlays && track.viewCount && (
         <div className="shrink-0 text-right">
           <div className="flex items-center gap-1">
@@ -103,21 +117,8 @@ export function UniversalTrackCard({
         </div>
       )}
 
-      {/* Rank Number with enhanced styling */}
-      {showRank && track.viewCount ? (
-        <div className="shrink-0 w-8 text-right">
-          <Badge
-            variant="outline"
-            className={cn(
-              "font-mono text-xs border-primary/30",
-              isTopThree ? "bg-amber-500/20 border-amber-500/50 text-amber-200" : "bg-muted/50",
-            )}
-          >
-            #{rank.toString().padStart(2, "0")}
-          </Badge>
-        </div>
-      ) :
-      (<div className="absolute -left-35 shrink-0 w-8 text-right">
+      {/* Last Played Time */}
+      {isCurrentMusic(track) && <div className="absolute -left-35 shrink-0 w-8 text-right">
         <Badge
           variant="outline"
           className={cn(
@@ -127,7 +128,7 @@ export function UniversalTrackCard({
         >
           {getTimeAgo(track.lastViewedAt!)}
         </Badge>
-      </div>)}
+      </div>}
 
       {/* Duration for Now Playing */}
       {isNowPlaying && track.duration && (

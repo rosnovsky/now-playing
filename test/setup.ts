@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
+import "@testing-library/jest-dom";
 
 // Global test setup for Node.js environment
 

@@ -61,7 +61,7 @@ export function UniversalArtistCard({
         )}
       >
         <img
-          src={artist.art || "/placeholder.svg"}
+          src={artist.thumb || "/placeholder.svg"}
           alt={`${artist.title} profile`}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />

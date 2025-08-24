@@ -6,7 +6,7 @@ export default defineConfig({
   test: {
     // Global test configuration
     globals: true,
-    environment: "node",
+    environment: "jsdom",
 
     // Coverage configuration with v8
     coverage: {
