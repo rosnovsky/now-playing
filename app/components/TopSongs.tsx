@@ -2,6 +2,7 @@ import { useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { usePollData } from '~/hooks/usePollingData';
 import { songsSchema, type Song } from "~/types";
+import { UniversalTrackCard } from './Song';
 
 export const TopSongs: React.FC = () => {
   const { headers, initialSongs } = useLoaderData<{ headers: Record<string, string>, initialSongs: Song[] }>();
@@ -49,25 +50,10 @@ export const TopSongs: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <ul className="space-y-4">
-        {songs.slice(0, 10).map((song, index) => (
+        {songs.slice(0, 5).map((song, index) => (
           <li key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
             {/* TODO: How it should work: */}
-            {/* <SongComponent song={song} /> */}
-
-            <div className="flex items-center p-4">
-              <div className="shrink-0 mr-4">
-                <img src={song.thumb} alt={`${song.title} cover`} className="w-20 h-20 object-cover rounded-md" />
-              </div>
-              <div className="grow">
-                <h3 className="text-xl font-semibold text-white">{song.title}</h3>
-                <p className="text-gray-400">{song.grandparentTitle}</p>
-                <p className="text-gray-500 text-sm">{song.parentTitle}</p>
-              </div>
-              <div className="shrink-0 ml-4 text-right">
-                <p className="text-green-600 font-semibold">{song.viewCount || 0} plays</p>
-                <p className="text-gray-500 text-sm">#{index + 1}</p>
-              </div>
-            </div>
+            <UniversalTrackCard isTopThree={index + 1 <= 3}  showPlays showRank rank={index +1 } track={song} />
           </li>
         ))}
       </ul>

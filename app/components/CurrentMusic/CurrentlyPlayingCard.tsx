@@ -1,6 +1,6 @@
-import { Card } from "~/components/ui/card"
-import { Badge } from "~/components/ui/badge"
-import { Clock } from "lucide-react"
+import { Clock } from "lucide-react";
+import { Badge } from "~/components/ui/badge";
+import { Card } from "~/components/ui/card";
 
 import { isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { useEffect } from "react";
@@ -8,6 +8,7 @@ import { CurrentMusicError, CurrentMusicNotPlaying, CurrentMusicSkeleton } from 
 import { usePollData } from "~/hooks/usePollingData";
 import { useStore } from "~/store";
 import { CurrentMusicResponse, currentMusicResponseSchema } from "~/types";
+import { getTimeAgo } from "~/utils/helpers";
 
 export const CurrentlyPlayingCard: React.FC = () => {
   const { headers, initialCurrentMusic } = useLoaderData<{ headers: Record<string, string>; initialCurrentMusic: CurrentMusicResponse | null }>();
@@ -60,7 +61,8 @@ export const CurrentlyPlayingCard: React.FC = () => {
             </Badge>
             <div className="flex items-center gap-1">
               <Clock className="w-3 h-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground font-mono">{currentMusic.duration}</span>
+              <span className="text-xs text-muted-foreground font-mono">
+                {getTimeAgo(currentMusic.lastViewedAt)}</span>
             </div>
           </div>
 

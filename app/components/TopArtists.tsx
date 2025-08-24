@@ -2,6 +2,7 @@ import { useLoaderData } from "@remix-run/react";
 import React from "react";
 import { usePollData } from "~/hooks/usePollingData";
 import { artistsSchema, type Artist } from "~/types";
+import { UniversalArtistCard } from "./Artist";
 
 export const TopArtists: React.FC = () => {
   const { headers } = useLoaderData<{ headers: Record<string, string> }>();
@@ -14,9 +15,8 @@ export const TopArtists: React.FC = () => {
   if (isLoading) {
     return (
       <div className="w-full animate-pulse">
-        <h2 className="text-2xl font-bold mb-4 text-green-400">Top 5 Artists</h2>
         <ul className="space-y-4">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(10)].map((_, index) => (
             <li key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4">
               <div className="flex items-center">
                 <div className="shrink-0 mr-4">
@@ -37,28 +37,17 @@ export const TopArtists: React.FC = () => {
     )
   }
 
-  if (error) {
+  if (error || !artists) {
     return "ERROR!"
   }
 
   return (
-    <div className="w-full">
-      <h2 className="text-2xl font-bold mb-4 text-green-400">Top 5 Artists</h2>
+    <div className="w-full max-w-4xl mx-auto">
       <ul className="space-y-4">
-        {artists?.slice(0, 5).map((artist, index) => (
-          <li key={artist.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4">
-            <div className="flex items-center">
-              <div className="shrink-0 mr-4">
-                <img src={artist.thumb} alt={`${artist.title} thumbnail`} className="w-16 h-16 object-cover rounded-full" />
-              </div>
-              <div className="grow">
-                <h3 className="text-xl font-semibold text-white">{artist.title}</h3>
-                <p className="text-gray-400 text-sm">#{index + 1}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-green-400 font-semibold">{artist.viewCount || 0} plays</p>
-              </div>
-            </div>
+        {artists.slice(0, 5).map((artist, index) => (
+          <li key={artist.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+            {/* TODO: How it should work: */}
+            <UniversalArtistCard showPlays isTopThree={index + 1 <= 3}  showRank rank={index +1 } artist={artist} />
           </li>
         ))}
       </ul>

@@ -2,30 +2,7 @@ import { useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { usePollData } from '~/hooks/usePollingData';
 import { songsSchema, type Song } from "~/types";
-import { TextRating } from './StarRating';
-
-const getTimeAgo = (timestamp: number): string => {
-  const seconds = Math.floor((Date.now() - timestamp * 1000) / 1000);
-
-  const intervals = [
-    { label: 'year', seconds: 31536000 },
-    { label: 'month', seconds: 2592000 },
-    { label: 'day', seconds: 86400 },
-    { label: 'hour', seconds: 3600 },
-    { label: 'min', seconds: 60 },
-    { label: 'sec', seconds: 1 }
-  ];
-
-  for (let i = 0; i < intervals.length; i++) {
-    const interval = intervals[i];
-    const count = Math.floor(seconds / interval.seconds);
-    if (count >= 1) {
-      return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`;
-    }
-  }
-
-  return 'just now';
-};
+import { UniversalTrackCard } from './Song';
 
 export const LastPlayedSongs: React.FC = () => {
   const { headers, initialSongs } = useLoaderData<{ headers: Record<string, string>, initialSongs: Song[] }>();
@@ -84,42 +61,28 @@ export const LastPlayedSongs: React.FC = () => {
     .sort((a, b) => (b.lastViewedAt || 0) - (a.lastViewedAt || 0))
     .slice(0, 50);
 
-  const columns = Math.min(sortedSongs.length, 3);
-  const itemsPerColumn = Math.ceil(sortedSongs.length / columns);
-
-  const distributeItems = () => {
-    const distributed = [];
-    for (let i = 0; i < columns; i++) {
-      distributed.push(sortedSongs.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn));
-    }
-    return distributed;
-  };
-
   return (
-    <div className="w-full min-h-svh">
-      <h2 className="text-2xl font-bold mb-4 text-green-400">Last 50 Played Songs</h2>
-      <div className={`flex flex-col lg:flex-row`}>
-        {distributeItems().map((columnItems, columnIndex) => (
-          <div key={columnIndex} className={`lg:w-1/${columns} flex flex-col`}>
-            {columnItems.map((song) => (
-              <div key={song.ratingKey} className="bg-gray-800 rounded-lg overflow-hidden shadow-xs m-2 py-8 px-2 flex items-center h-24">
-                <img src={song.thumb} alt={`${song.title} cover`} className="w-16 h-16 object-cover rounded-md mr-3" />
-                <div className="grow overflow-hidden my-5">
-                  <h3 className="text-md font-semibold text-white truncate">{song.title}</h3>
-                  <p className="text-xs text-gray-400 truncate">{song.grandparentTitle}</p>
-                  <p className="text-xs text-gray-500 truncate">{song.parentTitle}</p>
-                  <TextRating rating={song.userRating ?? 0} />
-                </div>
-                <div className="text-right ml-2 flex flex-col items-end">
-                  <p className="text-xs text-gray-500 font-thin truncate mb-1">
-                    {song.lastViewedAt ? getTimeAgo(song.lastViewedAt) : 'Never played'}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
+    <div className="space-y-4">
+      <div className="">
+        <div className="grid grid-cols-1 md:gris-cols-2 xl:grid-cols-3 gap-4  pb-4 scrollbar-hide justify-between">
+          {sortedSongs.map((track) => {
+            // const isFading = index >= songs.length - 10
+            // const fadeOpacity = isFading ? Math.max(0.1, 1 - (index - (songs.length - 10)) / 10) : 1
+
+            return (
+              <UniversalTrackCard
+                key={track.ratingKey}
+                showRank={false}
+                track={track}
+                variant="default"
+                className="flex-shrink-0 max-w-100 transition-opacity duration-300"
+                // style={{ opacity: fadeOpacity }}
+              />
+            )
+          })}
+        </div>
       </div>
+        <div className="absolute right-0 top-0 bottom-4 w-32 bg-gradient-to-l from-background to-transparent pointer-events-none" />
     </div>
   );
 };

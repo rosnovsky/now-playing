@@ -3,30 +3,21 @@ import { type CurrentMusic, type Song } from '~/types';
 import { Music } from "lucide-react"
 import { cn } from '~/lib/utils';
 import { Badge } from './ui/badge';
+import { getTimeAgo } from '~/utils/helpers';
 
 const isCurrentMusic = (song: Song): boolean => {
   return (song as CurrentMusic).isPlaying !== undefined;
 };
 
-interface Track {
-  id: string
-  title: string
-  artist: string
-  album: string
-  albumArt: string
-  plays?: number
-  rank?: number
-  isPlaying?: boolean
-  duration?: string
-}
+type Track = Song & Partial<CurrentMusic>;
 
 interface UniversalTrackCardProps {
-  track: Song
+  track: Track
   variant?: "default" | "compact" | "now-playing"
   showRank?: boolean
+  rank?: number
   showPlays?: boolean
   isTopThree?: boolean
-  onPlay?: (track: Track) => void
   className?: string
   style?: React.CSSProperties
 }
@@ -35,9 +26,9 @@ export function UniversalTrackCard({
   track,
   variant = "default",
   showRank = false,
+  rank = 0,
   showPlays = false,
   isTopThree = false,
-  // onPlay,
   className,
   style,
 }: UniversalTrackCardProps) {
@@ -48,7 +39,7 @@ export function UniversalTrackCard({
   return (
     <div
       className={cn(
-        "group relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300",
+        "group relative w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-300",
         isTopThree
           ? "bg-linear-to-r from-amber-500/10 via-music-card-bg to-music-card-bg/80 hover:from-amber-500/20 hover:via-music-card-hover hover:to-music-card-hover/80 border-amber-500/30 hover:border-amber-500/50"
           : "bg-linear-to-r from-music-card-bg to-music-card-bg/80 hover:from-music-card-hover hover:to-music-card-hover/80 border-border/30 hover:border-primary/40",
@@ -59,21 +50,6 @@ export function UniversalTrackCard({
       )}
       style={style}
     >
-      {/* Rank Number with enhanced styling */}
-      {showRank && track.viewCount && (
-        <div className="shrink-0 w-8 text-right">
-          <Badge
-            variant="outline"
-            className={cn(
-              "font-mono text-xs border-primary/30",
-              isTopThree ? "bg-amber-500/20 border-amber-500/50 text-amber-200" : "bg-muted/50",
-            )}
-          >
-            #{track.viewCount.toString().padStart(2, "0")}
-          </Badge>
-        </div>
-      )}
-
       {/* Album Art with enhanced styling */}
       <div
         className={cn(
@@ -126,6 +102,32 @@ export function UniversalTrackCard({
           <span className="text-xs text-muted-foreground/70 font-mono">plays</span>
         </div>
       )}
+
+      {/* Rank Number with enhanced styling */}
+      {showRank && track.viewCount ? (
+        <div className="shrink-0 w-8 text-right">
+          <Badge
+            variant="outline"
+            className={cn(
+              "font-mono text-xs border-primary/30",
+              isTopThree ? "bg-amber-500/20 border-amber-500/50 text-amber-200" : "bg-muted/50",
+            )}
+          >
+            #{rank.toString().padStart(2, "0")}
+          </Badge>
+        </div>
+      ) :
+      (<div className="absolute -left-35 shrink-0 w-8 text-right">
+        <Badge
+          variant="outline"
+          className={cn(
+            "font-mono text-xs border-primary/30",
+            isTopThree ? "bg-amber-500/20 border-amber-500/50 text-amber-200" : "bg-muted/50",
+          )}
+        >
+          {getTimeAgo(track.lastViewedAt!)}
+        </Badge>
+      </div>)}
 
       {/* Duration for Now Playing */}
       {isNowPlaying && track.duration && (

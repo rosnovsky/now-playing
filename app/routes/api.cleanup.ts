@@ -37,13 +37,13 @@ let workerState: WorkerState = {
   }
 };
 
-const WORKER_CONFIG = {
-  requestTimeout: 30000, // 30 seconds for API requests
-  chunkSize: 100, // Process items in chunks
-  retryAttempts: 3,
-  retryDelay: 1000,
-  logErrors: true
-};
+// const WORKER_CONFIG = {
+//   requestTimeout: 30000, // 30 seconds for API requests
+//   chunkSize: 100, // Process items in chunks
+//   retryAttempts: 3,
+//   retryDelay: 1000,
+//   logErrors: true
+// };
 
 export async function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
